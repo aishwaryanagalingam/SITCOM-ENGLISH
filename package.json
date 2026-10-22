@@ -1,0 +1,9 @@
+{
+  "name": "sitcom-english",
+  "version": "1.0.0",
+  "private": true,
+  "description": "English idioms learning website with talking AI tutors",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
