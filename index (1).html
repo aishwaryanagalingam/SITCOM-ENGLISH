@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Learn English idioms and new words from funny sitcom-style scenes with AI tutors you can talk to.">
+<title>SitcomEnglish</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  /* Layout concept: a 1970s sitcom set. Home is a retro TV with a channel guide, the series page is the opening
+     credits, the room is the studio floor (monitor, laugh track, script). Hard outlines and offset shadows, like a title card. */
+  :root{
+    --paper:#FFF3DC; --card:#FFFBF2; --ink:#2A1738; --muted:#6E5A78; --outline:#2A1738; --shadow:#2A1738;
+    --orange:#FF6B1A; --mustard:#FFC83D; --teal:#0F9D8C; --pink:#FF5C8A; --blue:#3A6BFF; --btn-ink:#1B0B26;
+    --crt:#15101F; --crt-ink:#F6F0FF; --focus:#3A6BFF;
+    --disp:"Bowlby One","Arial Black",Impact,sans-serif; --body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"Space Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#150D22; --card:#241638; --ink:#FFF3DC; --muted:#BBA9CC; --outline:#8B6BC4; --shadow:#07030E; --crt:#0C0814; --focus:#9DB6FF;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#150D22; --card:#241638; --ink:#FFF3DC; --muted:#BBA9CC; --outline:#8B6BC4; --shadow:#07030E; --crt:#0C0814; --focus:#9DB6FF;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+    background-image:radial-gradient(color-mix(in srgb,var(--ink) 12%,transparent) 1.2px,transparent 1.4px);background-size:22px 22px}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--card)}
+  [hidden]{display:none!important}
+  button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+  :focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:8px}
+  h1,h2,h3,p,blockquote{margin:0}
+  .mono{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+  .kicker{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .pop{background:var(--card);border:3px solid var(--outline);border-radius:18px;box-shadow:6px 6px 0 var(--shadow);min-width:0}
+
+  /* header + ticker */
+  .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--card);border-bottom:3px solid var(--outline)}
+  .top-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px 12px;min-height:64px;padding-block:8px;
+    padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .stripe{height:10px;background:linear-gradient(90deg,var(--orange) 0 25%,var(--mustard) 25% 50%,var(--teal) 50% 75%,var(--pink) 75%)}
+  .logo{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-size:22px;line-height:1}
+  .logo svg{width:42px;height:42px;flex:none}
+  .logo .en{color:var(--orange)}
+  .top-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .chip{font-family:var(--mono);font-weight:700;font-size:13px;border:2.5px solid var(--outline);border-radius:99px;padding:3px 12px;background:var(--mustard);color:var(--btn-ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .chip.t{background:var(--teal);color:#fff}
+
+  main{max-width:1180px;margin:0 auto;padding-block:30px 64px;
+    padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+  /* buttons */
+  .btn{background:var(--orange);color:var(--btn-ink);border:3px solid var(--outline);border-radius:14px;padding:9px 18px;font-weight:700;letter-spacing:.02em;
+    box-shadow:4px 4px 0 var(--shadow);transition:transform .1s,box-shadow .1s}
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:6px 6px 0 var(--shadow)}
+  .btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--shadow)}
+  .btn:disabled{opacity:.55;cursor:default;transform:none;box-shadow:4px 4px 0 var(--shadow)}
+  .btn.alt{background:var(--mustard)}
+  .ghost{background:var(--card);color:var(--ink);border:3px solid var(--outline);border-radius:14px;padding:7px 14px;font-weight:700;font-size:14px;box-shadow:3px 3px 0 var(--shadow)}
+  .ghost:hover{background:var(--mustard);color:var(--btn-ink)}
+
+  /* home */
+  .hero{text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+  .hero h1{font-family:var(--disp);font-weight:400;font-size:clamp(32px,6.4vw,68px);line-height:1.04;max-width:900px;text-wrap:balance}
+  .hl{background:var(--mustard);color:var(--btn-ink);padding:0 .2em;border:3px solid var(--outline);border-radius:12px;display:inline-block;transform:rotate(-2deg);box-shadow:5px 5px 0 var(--shadow)}
+  .hero .sub{font-size:18px;color:var(--muted);max-width:560px;text-wrap:balance}
+  .tvwrap{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:36px;align-items:center;margin-top:62px}
+  @media (max-width:880px){.tvwrap{grid-template-columns:minmax(0,1fr);margin-top:56px}}
+  .tv{position:relative;background:var(--orange);border:3px solid var(--outline);border-radius:34px;padding:18px 18px 12px;box-shadow:9px 9px 0 var(--shadow)}
+  .tv::before,.tv::after{content:"";position:absolute;top:-50px;width:5px;height:64px;background:var(--outline);border-radius:3px;transform-origin:bottom}
+  .tv::before{left:34%;transform:rotate(-26deg)}.tv::after{right:34%;transform:rotate(26deg)}
+  .screen{--c:#3A6BFF;position:relative;aspect-ratio:4/3;min-height:300px;width:100%;min-width:0;border-radius:24px/28px;overflow:hidden;border:3px solid var(--outline);isolation:isolate;
+    background:radial-gradient(120% 90% at 50% 0%,color-mix(in srgb,var(--c) 60%,var(--crt)),var(--crt));color:var(--crt-ink)}
+  .screen::after{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.2) 0 1px,transparent 1px 3px)}
+  @media (max-width:520px){.screen{aspect-ratio:auto;min-height:320px}.scr-main{max-width:100%}.scr-cast{opacity:.9}.scr-cast>div{width:clamp(64px,20vw,90px)}.tv{padding:14px 12px 10px}}
+  .static{position:absolute;inset:0;z-index:6;opacity:0;pointer-events:none;background-size:160px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+  .static.on{animation:static .42s steps(7) 1}
+  @keyframes static{0%{opacity:.95;background-position:0 0}30%{background-position:-60px 40px}60%{opacity:.7;background-position:30px -50px}100%{opacity:0;background-position:-40px 20px}}
+  .scr-in{position:relative;z-index:2;height:100%;padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between}
+  .chnum{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--mustard)}
+  .scr-main{display:flex;flex-direction:column;align-items:flex-start;gap:8px;max-width:62%}
+  .scr-emoji{font-size:40px;line-height:1}
+  .scr-title{font-family:var(--disp);font-weight:400;font-size:clamp(26px,4.2vw,44px);line-height:1.02}
+  .scr-about{font-size:14px;opacity:.9}
+  .scr-cast{position:absolute;right:10px;bottom:-8px;display:flex;align-items:flex-end;z-index:1}
+  .scr-cast>div{width:clamp(80px,17vw,130px)}
+  .scr-cast svg{width:100%;height:auto;display:block}
+  .knobs{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 10px 0}
+  .knob{width:26px;height:26px;border-radius:50%;background:var(--mustard);border:3px solid var(--outline)}
+  .grille{flex:1;height:14px;background:repeating-linear-gradient(90deg,var(--outline) 0 3px,transparent 3px 9px);opacity:.75;border-radius:3px}
+  .remote{padding:20px;display:flex;flex-direction:column;gap:10px;transform:rotate(1.2deg)}
+  @media (max-width:880px){.remote{transform:none}}
+  .rh{font-family:var(--mono);font-size:13px;letter-spacing:.16em;margin-bottom:4px}
+  .chlist{display:flex;flex-direction:column;gap:8px}
+  .ch{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-align:left;padding:8px 12px;border:2.5px solid var(--outline);border-radius:12px;background:var(--card);font-weight:700}
+  .ch .num{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--paper);border-radius:6px;padding:1px 7px}
+  .ch:hover{background:color-mix(in srgb,var(--mustard) 40%,var(--card))}
+  .ch.on{background:var(--mustard);color:var(--btn-ink);box-shadow:3px 3px 0 var(--shadow);transform:translate(-2px,-2px)}
+  .note{text-align:center;margin-top:44px;font-size:13px;color:var(--muted)}
+
+  /* opening credits (tutor pick) */
+  .titlecard{background:var(--c);color:#fff;border:3px solid var(--outline);border-radius:22px;box-shadow:8px 8px 0 var(--shadow);padding:34px 20px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;
+    background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.12) 0 14px,transparent 14px 28px)}
+  .titlecard .kicker{color:#fff;opacity:.9}
+  .titlecard h1{font-family:var(--disp);font-weight:400;font-size:clamp(30px,6vw,64px);line-height:1.05;text-shadow:4px 4px 0 rgba(0,0,0,.35);text-wrap:balance}
+  .cast{display:grid;gap:34px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),340px));justify-content:center;margin-top:44px}
+  .cc{padding:16px;display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:transform .15s}
+  .cc.l{transform:rotate(-1.6deg)}.cc.r{transform:rotate(1.6deg)}
+  .cc:hover{transform:rotate(0) translateY(-6px)}
+  .cc-pic{--spd:1;height:220px;border:3px solid var(--outline);border-radius:12px;background:var(--aura);display:flex;align-items:flex-end;justify-content:center;overflow:hidden;
+    background-image:radial-gradient(rgba(255,255,255,.28) 2px,transparent 2.5px);background-size:16px 16px}
+  .cc-pic svg{width:190px;height:auto;display:block;margin-bottom:-14px}
+  .cc h3{font-family:var(--disp);font-weight:400;font-size:28px;margin-top:8px;line-height:1.1}
+  .role{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  blockquote{font-style:italic;color:var(--muted);font-size:14px;min-height:62px;border-left:4px solid var(--aura);padding-left:10px}
+  .cc .btn{margin-top:8px}
+  .meter{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;font-weight:700;margin:4px 0}
+  .bars{display:inline-flex;align-items:flex-end;gap:3px}
+  .bars i{width:9px;height:var(--h);border:2px solid var(--outline);background:var(--card);border-radius:3px;display:inline-block}
+
+  /* studio floor (room) */
+  .set{display:grid;gap:22px;align-items:start;grid-template-columns:minmax(0,250px) minmax(0,1fr);grid-template-areas:"c m"}
+  .c-card{grid-area:c;padding:16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+  .eps{grid-area:e;padding:16px}
+  .r-main{grid-area:m;display:flex;flex-direction:column;gap:18px;min-width:0}
+  @media (max-width:880px){.set{grid-template-columns:minmax(0,1fr);grid-template-areas:"c" "m"}}
+  .cpic{--size:140px;width:calc(var(--size) + 22px);height:calc(var(--size) + 22px);border-radius:50%;border:3px solid var(--outline);display:grid;place-items:end center;overflow:hidden;
+    background:color-mix(in srgb,var(--aura) 40%,var(--card));animation:aura calc(2.6s / var(--spd,1)) ease-in-out infinite}
+  .cpic svg{width:var(--size);height:auto;display:block;margin-bottom:-10px}
+  .talking .cpic{animation-duration:calc(1s / var(--spd,1))}
+  .c-card h3{font-family:var(--disp);font-weight:400;font-size:24px;margin-top:8px}
+  .eps h3,.sect{font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+  .season{font-family:var(--mono);font-size:12px;color:var(--muted);margin:6px 0 8px}
+  .prog{height:12px;border:2.5px solid var(--outline);border-radius:99px;background:var(--paper);overflow:hidden}
+  .prog i{display:block;height:100%;background:var(--teal);border-right:2.5px solid var(--outline);transition:width .5s}
+  .eplist{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+  .ep{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;text-align:left;padding:6px 10px;border:2.5px solid var(--outline);border-radius:10px;background:var(--card);font-size:14px;font-weight:500}
+  .ep .n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--muted)}
+  .ep:hover{background:color-mix(in srgb,var(--mustard) 35%,var(--card))}
+  .ep.on{background:var(--mustard);color:var(--btn-ink);font-weight:700}.ep.on .n{color:var(--btn-ink)}
+  .ep .ok{font-weight:700;color:var(--teal)}.ep.on .ok{color:var(--btn-ink)}
+
+  .mh{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+  .ep-title{font-family:var(--disp);font-weight:400;font-size:clamp(22px,3.4vw,34px);line-height:1.1;margin-top:6px}
+  .tag{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;border:2px solid var(--outline);background:var(--pink);color:var(--btn-ink);text-transform:uppercase;letter-spacing:.06em}
+  .monitor{position:relative;background:var(--crt);border:3px solid var(--outline);border-radius:20px;box-shadow:7px 7px 0 var(--shadow);overflow:hidden;color:var(--crt-ink)}
+  .monitor::after{content:"";position:absolute;inset:0;z-index:7;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px)}
+  .mbar{display:flex;justify-content:space-between;align-items:center;padding:6px 14px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;border-bottom:2px solid rgba(255,255,255,.18)}
+  .rec{display:inline-flex;align-items:center;gap:7px}
+  .rec i{width:10px;height:10px;border-radius:50%;background:#ff3b3b;animation:blinkdot 1.2s steps(2) infinite}
+  @keyframes blinkdot{50%{opacity:.2}}
+  .stage{--c:#FF6B1A;position:relative;height:clamp(250px,36vw,330px);overflow:hidden;
+    background:linear-gradient(180deg,color-mix(in srgb,var(--c) 38%,var(--crt)) 0 68%,color-mix(in srgb,var(--c) 18%,var(--crt)) 68% 100%)}
+  .prop{position:absolute;font-size:30px;transform:translateY(-50%)}
+  .actor{position:absolute;bottom:30px;width:clamp(96px,19%,150px)}
+  .actor.a{left:6%}.actor.b{right:6%;transform:scaleX(-1)}
+  .actor svg{width:100%;height:auto;display:block}
+  .chyron{position:absolute;left:0;right:0;bottom:0;z-index:3;display:flex;align-items:stretch;background:rgba(10,6,20,.86);border-top:3px solid var(--mustard);min-height:60px}
+  .who{background:var(--mustard);color:#1B0B26;font-family:var(--mono);font-weight:700;font-size:13px;padding:8px 12px;text-transform:uppercase;display:flex;align-items:center;white-space:nowrap}
+  .line{padding:8px 14px;font-family:var(--mono);font-size:14px;line-height:1.45;display:flex;align-items:center}
+  .w.hid{opacity:0}.w.m{background:var(--pink);color:#1B0B26;border-radius:4px;padding:0 3px;font-weight:700}
+  .clap{position:absolute;inset:0;z-index:4;display:none;place-items:center;background:rgba(10,6,20,.6)}
+  .clap.show{display:grid}
+  .board{width:210px;border:3px solid #fff;border-radius:8px;background:#1a1a1a;color:#fff;font-family:var(--mono);font-weight:700;text-align:center;overflow:visible;position:relative;padding-top:30px;padding-bottom:12px}
+  .stick{position:absolute;left:-3px;right:-3px;top:-3px;height:30px;border:3px solid #fff;border-radius:6px;transform-origin:left bottom;
+    background:repeating-linear-gradient(115deg,#fff 0 16px,#1a1a1a 16px 32px);animation:stick .9s ease-out forwards}
+  @keyframes stick{0%,45%{transform:rotate(-24deg)}62%,100%{transform:rotate(0)}}
+  .laugh-old{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 14px;border:3px solid var(--outline);border-radius:14px;background:var(--card)}
+  .lbars{display:flex;align-items:flex-end;gap:4px;height:34px;flex:1;min-width:120px}
+  .lbars i{flex:1;height:6px;background:var(--teal);border:2px solid var(--outline);border-radius:3px}
+  .laugh.go .lbars i{animation:lb .38s ease-in-out infinite alternate;animation-delay:calc(var(--k) * 40ms)}
+  @keyframes lb{from{height:6px}to{height:calc(12px + var(--k) * 2px + 8px)}}
+  .sign{font-family:var(--disp);font-size:15px;padding:3px 12px;border:3px solid var(--outline);border-radius:8px;background:var(--paper);color:var(--muted);transition:.2s}
+  .sign.go{background:var(--mustard);color:var(--btn-ink);box-shadow:0 0 18px 3px var(--mustard);animation:flash .4s steps(2) infinite}
+  @keyframes flash{50%{box-shadow:0 0 6px 0 var(--mustard)}}
+
+  .clues{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr))}
+  .clue{border:3px solid var(--outline);border-radius:14px;padding:12px 14px;box-shadow:4px 4px 0 var(--shadow);font-size:15px}
+  .clue .mono{display:block;margin-bottom:4px;font-weight:700}
+  .c1{background:color-mix(in srgb,var(--mustard) 38%,var(--card))}.c2{background:color-mix(in srgb,var(--teal) 28%,var(--card))}.c3{background:color-mix(in srgb,var(--pink) 28%,var(--card))}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .toast{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--teal)}
+
+  .script{display:flex;flex-direction:column;height:min(60vh,540px);min-height:380px;overflow:hidden}
+  .script-h{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:9px 14px;border-bottom:3px solid var(--outline)}
+  .log{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .msg{max-width:min(88%,640px);padding:8px 14px 10px;border:2.5px solid var(--outline);border-radius:14px;box-shadow:3px 3px 0 var(--shadow);overflow-wrap:anywhere}
+  .msg .nm{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .msg .tx{white-space:pre-wrap;line-height:1.5}
+  .msg.ai{background:var(--card);align-self:flex-start}
+  .msg.me{background:var(--mustard);color:var(--btn-ink);align-self:flex-end}
+  .msg.me .nm{color:#4a3600}
+  .msg.typing .tx{opacity:.65;font-style:italic}
+  .bar{display:flex;gap:10px;padding:12px;border-top:3px solid var(--outline);background:color-mix(in srgb,var(--mustard) 14%,var(--card))}
+  .bar input{flex:1;min-width:0;font:inherit;color:var(--ink);background:var(--card);border:3px solid var(--outline);border-radius:12px;padding:9px 12px}
+  .bar input::placeholder{color:var(--muted)}
+
+  /* avatar motion */
+  .av{animation:bob calc(3.2s / var(--spd,1)) ease-in-out infinite}
+  .eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
+  .mouth{transform-box:fill-box;transform-origin:center}
+  .talking .mouth{animation:talk calc(.22s / var(--spd,1)) ease-in-out infinite alternate}
+  .talking .av{animation:bobtalk calc(.5s / var(--spd,1)) ease-in-out infinite}
+  .thinking .brow{transform:translateY(-4px)}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  @keyframes bobtalk{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-2px) rotate(.8deg)}}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+  @keyframes talk{from{transform:scaleY(.4)}to{transform:scaleY(2.4)}}
+  @keyframes aura{0%,100%{box-shadow:0 0 0 0 var(--aura)}50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--aura) 35%,transparent)}}
+
+  /* declutter additions */
+  .c-card{position:sticky;top:96px}
+  @media (max-width:880px){.c-card{position:static}}
+  .tog{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .sign{font-size:12px;padding:1px 9px;border-radius:6px}
+  .lesson{padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+  .lrow{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:baseline}
+  @media (max-width:520px){.lrow{grid-template-columns:1fr;gap:0}}
+  .lrow .mono{font-weight:700;color:var(--muted)}
+  .lrow.ex{background:color-mix(in srgb,var(--mustard) 30%,var(--card));border:2.5px solid var(--outline);border-radius:12px;padding:8px 12px;font-style:italic}
+  .mic{width:48px;flex:none;font-size:20px;border:3px solid var(--outline);border-radius:12px;background:var(--card);box-shadow:3px 3px 0 var(--shadow)}
+  .mic.on{background:var(--pink);animation:flash .6s steps(2) infinite}
+  .scrim{position:fixed;inset:0;z-index:38;background:rgba(20,8,30,.5)}
+  .drawer{position:fixed;top:0;right:0;bottom:0;z-index:40;width:min(430px,100vw);background:var(--card);border-left:3px solid var(--outline);display:flex;flex-direction:column;
+    transform:translateX(105%);transition:transform .25s;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .drawer.open{transform:none}
+  .dr-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 8px}
+  .dr-h h3{font-family:var(--disp);font-weight:400;font-size:22px}
+  .dr-s{padding:0 16px 8px}
+  .dr-s input{width:100%;font:inherit;color:var(--ink);background:var(--paper);border:3px solid var(--outline);border-radius:12px;padding:9px 12px}
+  .topics{display:flex;gap:6px;flex-wrap:wrap;padding:4px 16px 10px}
+  .tp{font-family:var(--mono);font-size:12px;font-weight:700;padding:3px 10px;border:2.5px solid var(--outline);border-radius:99px;background:var(--card)}
+  .tp.on{background:var(--mustard);color:var(--btn-ink)}
+  .dr-list{flex:1;overflow:auto;padding:4px 16px 16px;display:flex;flex-direction:column;gap:6px}
+  .dr-empty{padding:10px 0;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+  .nw{position:fixed;right:16px;top:96px;z-index:35;width:min(310px,calc(100vw - 32px));background:var(--card);border:3px solid var(--outline);border-radius:16px;box-shadow:6px 6px 0 var(--shadow);padding:12px 14px;
+    animation:nwin .45s cubic-bezier(.2,1.4,.4,1)}
+  @keyframes nwin{from{transform:translateX(120%)}to{transform:none}}
+  @media (max-width:640px){.nw{top:auto;right:auto;left:16px;width:calc(100vw - 32px);max-width:calc(100vw - 32px);box-sizing:border-box;bottom:calc(14px + env(safe-area-inset-bottom,0px))}.nw-hint{white-space:normal}}
+  .nw-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .nw-top .tag{background:var(--mustard)}
+  .nw-x{font-size:18px;line-height:1;padding:2px 6px;border-radius:8px}
+  .nw-w{font-family:var(--disp);font-size:20px;line-height:1.15;text-align:left;margin:8px 0 2px;display:block;width:100%}
+  .nw-hint{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .nw-body{display:flex;flex-direction:column;gap:6px;margin-top:6px;font-size:14px}
+  .nw-body .ex{font-style:italic;background:color-mix(in srgb,var(--mustard) 28%,var(--card));border-radius:8px;padding:6px 10px}
+  .nw-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+  .nw-btns .ghost{padding:5px 10px;font-size:13px}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}.w.hid{opacity:1}}
+  .teach{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+  .teach span{border:2px solid var(--outline);border-radius:99px;padding:1px 10px;background:var(--soft,var(--paper))}
+  .cc .teach{justify-content:flex-start}
+  .tabs{display:flex;gap:8px;padding:0 16px 8px}
+  .mic{width:auto;padding:0 14px;font-size:14px;font-weight:700;white-space:nowrap}
+  .nw-w small{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .script-h{display:flex;justify-content:space-between;gap:10px}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <button class="logo" id="logo" aria-label="SitcomEnglish home">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="58" fill="#FF6B1A" stroke="#2A1738" stroke-width="5"/><rect x="20" y="26" width="54" height="38" rx="11" fill="#FFFFFF"/><path d="M30 63 L26 77 L44 63 Z" fill="#FFFFFF"/><rect x="46" y="48" width="56" height="38" rx="11" fill="#2A1738"/><path d="M90 85 L96 99 L76 85 Z" fill="#2A1738"/><circle cx="62" cy="67" r="4" fill="#FFFFFF"/><circle cx="74" cy="67" r="4" fill="#FFFFFF"/><circle cx="86" cy="67" r="4" fill="#FFFFFF"/></svg>
+      <span>Sitcom<span class="en">English</span></span>
+    </button>
+    <div class="top-r">
+      <span class="chip t" id="streak">🔥 0</span>
+      <span class="chip" id="xp">⭐ 0 XP</span>
+      <button class="ghost" id="back" hidden>◀ BACK</button>
+    </div>
+  </div>
+  <div class="stripe"></div>
+</header>
+<main id="app"></main>
+<script>
+/* ============ DATA ============ */
+const BASE = "You are an English-speaking tutor inside a fun app for Tamil-speaking learners.\nRules:\n- Keep replies SHORT (2-5 sentences), friendly and funny in your character's style.\n- Teach everyday English, idioms, phrasal verbs and new words with a simple example.\n- If the learner makes a mistake, gently show the corrected sentence, then continue the chat.\n- If the learner writes Tanglish (Tamil in English letters), reply mostly in simple English with a short Tamil/Tanglish hint.\n- End most replies with one small question so the learner keeps talking.\n- Never use character names, catchphrases or quotes from real TV shows. Stay as your own original character.\n- Plain text only, no markdown.";
+
+/* Original tutors, one per sitcom style. look = [skin, hair, hairStyle, shirt, extra] */
+const TUTORS = [
+  {id:"gary",g:"m",name:"Gary",role:"The Goofy Boss",blurb:"Awkward jokes, big heart. Office English and idioms.",look:["#F2C9A0","#6B4A2B","short","#3B82F6","tie"],voice:[.9,.95],
+   greet:"Hey hey! Gary here, your world's okay-est English boss. Pick a phrase or just chat with me!",
+   energy:{emoji:"😜",label:"Chaotic Boss Energy",level:5,speed:1.25,color:"#3B82F6"},
+   persona:"You are Gary, a goofy, awkward but warm office boss. You love corny jokes and workplace English. Energy: chaotic, over-excited, lots of exclamation marks and silly tangents."},
+  {id:"priya",g:"f",name:"Priya",role:"The Sarcastic Desk Mate",blurb:"Dry humour, corrects you with a smile. Slang and sarcasm.",look:["#C68E66","#1F1410","long","#EC4899","earrings"],voice:[1.15,1],
+   greet:"Oh, you're here. Fine, I'll be nice. Pick a phrase and let's make your English less boring.",
+   energy:{emoji:"😏",label:"Deadpan Cool",level:2,speed:.8,color:"#EC4899"},
+   persona:"You are Priya, a dry, sarcastic but kind desk mate. Light sarcasm, slang, short punchy lines. Energy: deadpan, calm, very few exclamation marks."},
+  {id:"mama",g:"f",name:"Mama Jo",role:"The Chaotic Family Mom",blurb:"Warm, nosy, dramatic. Everyday home English.",look:["#E9B98E","#8A4B2A","bun","#10B981","earrings"],voice:[1.2,1.02],
+   greet:"Hello sweetheart! Sit, sit. Have you eaten? Okay, now pick a phrase and let's talk!",
+   energy:{emoji:"🤗",label:"Warm Drama",level:4,speed:1.1,color:"#10B981"},
+   persona:"You are Mama Jo, a warm, dramatic, nosy family mom. You teach home and family English and ask if they've eaten. Energy: affectionate and a little fussy."},
+  {id:"dev",g:"m",name:"Uncle Dev",role:"The Dad-Joke Dad",blurb:"Terrible puns, great explanations. Phrasal verbs.",look:["#B9835C","#2A1D16","bald","#F59E0B","glasses"],voice:[.8,.92],
+   greet:"Hi kiddo! I'd tell you a pun about English, but it'd be too tense. Ha! Ready?",
+   energy:{emoji:"😄",label:"Chill Dad Vibes",level:2,speed:.85,color:"#F59E0B"},
+   persona:"You are Uncle Dev, a dad-joke-loving dad. You make puns and explain phrasal verbs very simply. Energy: relaxed and chill, end with a pun."},
+  {id:"mia",g:"f",name:"Mia",role:"The Over-Sharer Bestie",blurb:"Gossip, dating, cafe talk. Casual spoken English.",look:["#F6D3B3","#D9A441","curly","#8B5CF6","none"],voice:[1.25,1.08],
+   greet:"OMG hiii! Okay so, tell me everything. Let's chat and level up your English!",
+   energy:{emoji:"🤩",label:"Hyper Bestie",level:5,speed:1.4,color:"#8B5CF6"},
+   persona:"You are Mia, an energetic over-sharing best friend. Casual spoken English, cafe talk, texting slang. Energy: hyper and bubbly, lots of OMG and emojis."},
+  {id:"leo",g:"m",name:"Leo",role:"The Smooth Charmer",blurb:"Easygoing, funny, great at small talk and dating English.",look:["#E6B88F","#3B2A1A","short","#14B8A6","none"],voice:[.95,1],
+   greet:"Hey, good to see you! Grab a seat, let's talk. No pressure, just fun.",
+   energy:{emoji:"😎",label:"Smooth Charmer",level:3,speed:1,color:"#14B8A6"},
+   persona:"You are Leo, a smooth, easygoing charmer. You teach casual small talk, dating and social English. Energy: relaxed, easy humour."},
+  {id:"nikhil",g:"m",name:"Nikhil",role:"The Genius Roommate",blurb:"Over-explains everything. Grammar and word origins.",look:["#D8A47A","#111827","short","#64748B","glasses"],voice:[1,1.1],
+   greet:"Hello. Statistically, today is a good day to improve your English. Shall we begin?",
+   energy:{emoji:"🤓",label:"Focused Nerd",level:3,speed:1,color:"#64748B"},
+   persona:"You are Nikhil, a genius nerdy roommate who over-explains grammar and word origins, but stays clear and short. Energy: focused and precise."},
+  {id:"anu",g:"f",name:"Dr. Anu",role:"The Quirky Scientist",blurb:"Fun facts, smart words and sharp grammar tips.",look:["#C68E66","#111827","bun","#A855F7","glasses"],voice:[1.2,1.12],
+   greet:"Hello! Fun fact: speaking out loud is the fastest way to learn English. Shall we?",
+   energy:{emoji:"🧠",label:"Quirky Genius",level:4,speed:1.15,color:"#A855F7"},
+   persona:"You are Dr. Anu, a quirky scientist. You share fun facts, smart words and sharp grammar tips. Energy: curious and excited."},
+  {id:"sunny",g:"m",name:"Sunny",role:"The Too-Cheerful Detective",blurb:"Fast, funny, motivational. Confidence and interviews.",look:["#A86F4A","#0F0F0F","cap","#0EA5E9","none"],voice:[.95,1.12],
+   greet:"Case file open: YOUR ENGLISH. Let's crack it together. Noice!",
+   energy:{emoji:"🔥",label:"Max Hype",level:5,speed:1.35,color:"#0EA5E9"},
+   persona:"You are Sunny, a too-cheerful detective. Fast, motivational, great for confidence and interview English. Energy: maximum hype, short punchy sentences."},
+  {id:"raj",g:"m",name:"Captain Raj",role:"The Stone-Faced Captain",blurb:"Deadpan and serious, secretly hilarious. Formal English.",look:["#A86F4A","#0F0F0F","bald","#475569","none"],voice:[.7,.88],
+   greet:"Sit. Today we improve your English. Do not be late.",
+   energy:{emoji:"😐",label:"Stone-Faced Deadpan",level:1,speed:.75,color:"#475569"},
+   persona:"You are Captain Raj, a stone-faced, deadpan captain who is secretly hilarious. You teach formal and interview English. Energy: flat, few words, dry wit."},
+  {id:"rita",g:"f",name:"Rita",role:"The Small-Town Planner",blurb:"Relentlessly positive. Meetings, emails, polite English.",look:["#F0C4A0","#7C2D12","long","#EF4444","none"],voice:[1.15,1.05],
+   greet:"Hi! I made a plan, a backup plan, and a snack plan. Let's get you fluent!",
+   energy:{emoji:"☀️",label:"Sunshine Positive",level:4,speed:1.15,color:"#EF4444"},
+   persona:"You are Rita, a relentlessly positive small-town planner. Polite English for meetings and emails. Energy: sunny, upbeat, encouraging."},
+  {id:"vikram",g:"m",name:"Vikram",role:"The Gruff Grump",blurb:"Hates small talk, loves good English. Direct and blunt.",look:["#D8A47A","#4B2E1A","short","#B45309","none"],voice:[.75,.9],
+   greet:"I don't like small talk. But I like good English. Let's go.",
+   energy:{emoji:"😤",label:"Gruff Grump",level:2,speed:.85,color:"#B45309"},
+   persona:"You are Vikram, a gruff, blunt grump who hates small talk but loves clear English. You teach direct, professional English. Energy: grumpy and low, with a rare soft moment."}
+];
+
+/* Series are menu labels. Each tutor is an original character in that show's style. */
+const SERIES = [
+  {id:"office",name:"The Office",emoji:"🏢",color:"#3B82F6",about:"Meetings, bosses and desk-mates. Office English.",tutors:["gary","priya"]},
+  {id:"modern",name:"Modern Family",emoji:"🏠",color:"#10B981",about:"Home, parents and kids. Everyday English.",tutors:["mama","dev"]},
+  {id:"friends",name:"Friends",emoji:"☕",color:"#8B5CF6",about:"Cafe talk, dating and hanging out. Casual English.",tutors:["mia","leo"]},
+  {id:"bigbang",name:"The Big Bang Theory",emoji:"🧪",color:"#64748B",about:"Geeky chat, grammar and smart words.",tutors:["nikhil","anu"]},
+  {id:"b99",name:"Brooklyn Nine-Nine",emoji:"🚓",color:"#0EA5E9",about:"Confidence, interviews and quick comebacks.",tutors:["sunny","raj"]},
+  {id:"parks",name:"Parks and Recreation",emoji:"🌳",color:"#EF4444",about:"Polite English for meetings, emails and town halls.",tutors:["rita","vikram"]}
+];
+
+
+
+/* ============ AVATAR (original SVG) ============ */
+function avatar(t){
+  const [skin,hair,style,shirt,extra]=t.look;
+  const brow=(hair==="#111827"||hair==="#0F0F0F")?"#000":hair;
+  const back=style==="long"?`<path d="M42 92 Q38 190 62 200 L138 200 Q162 190 158 92 Z" fill="${hair}"/>`:"";
+  const top={
+    short:`<path d="M52 82 Q52 38 100 38 Q148 38 148 82 Q136 62 100 62 Q64 62 52 82Z" fill="${hair}"/>`,
+    long:`<path d="M50 90 Q46 36 100 36 Q154 36 150 90 Q138 60 100 60 Q62 60 50 90Z" fill="${hair}"/>`,
+    bun:`<circle cx="100" cy="32" r="16" fill="${hair}"/><path d="M52 84 Q52 40 100 40 Q148 40 148 84 Q134 62 100 62 Q66 62 52 84Z" fill="${hair}"/>`,
+    bald:`<path d="M54 76 Q60 62 70 66 Q66 78 54 82Z M146 76 Q140 62 130 66 Q134 78 146 82Z" fill="${hair}"/>`,
+    curly:`<g fill="${hair}"><circle cx="62" cy="58" r="16"/><circle cx="84" cy="44" r="17"/><circle cx="110" cy="42" r="17"/><circle cx="134" cy="54" r="16"/><circle cx="146" cy="78" r="12"/><circle cx="54" cy="80" r="12"/></g>`,
+    cap:`<path d="M50 78 Q50 34 100 34 Q150 34 150 78Z" fill="#0F172A"/><rect x="46" y="74" width="108" height="10" rx="5" fill="#0F172A"/><path d="M130 80 L176 88 L130 92Z" fill="#0F172A"/>`
+  }[style]||"";
+  const ex={
+    glasses:`<g fill="none" stroke="#111" stroke-width="3"><circle cx="80" cy="108" r="14"/><circle cx="120" cy="108" r="14"/><path d="M94 108 H106"/></g>`,
+    earrings:`<circle cx="52" cy="128" r="4" fill="#FBBF24"/><circle cx="148" cy="128" r="4" fill="#FBBF24"/>`,
+    tie:`<path d="M94 176 L106 176 L110 214 L100 222 L90 214Z" fill="#B91C1C"/>`,
+    none:""
+  }[extra]||"";
+  return `<svg viewBox="0 0 200 224" role="img" aria-label="${esc(t.name)}"><g class="av">${back}
+    <rect x="40" y="170" width="120" height="60" rx="26" fill="${shirt}"/>${extra==="tie"?'<path d="M84 170 L100 190 L116 170Z" fill="#fff"/>':""}
+    <rect x="88" y="150" width="24" height="28" rx="10" fill="${skin}"/><ellipse cx="100" cy="108" rx="50" ry="56" fill="${skin}"/>
+    <ellipse cx="50" cy="112" rx="7" ry="12" fill="${skin}"/><ellipse cx="150" cy="112" rx="7" ry="12" fill="${skin}"/>${top}
+    <g class="brow" fill="none" stroke="${brow}" stroke-width="4" stroke-linecap="round"><path d="M68 90 Q80 84 92 90"/><path d="M108 90 Q120 84 132 90"/></g>
+    <g class="eyes"><ellipse cx="80" cy="108" rx="6" ry="7.5" fill="#111"/><ellipse cx="120" cy="108" rx="6" ry="7.5" fill="#111"/><circle cx="82" cy="105" r="2" fill="#fff"/><circle cx="122" cy="105" r="2" fill="#fff"/></g>
+    <ellipse cx="68" cy="130" rx="9" ry="5" fill="#F87171" opacity=".25"/><ellipse cx="132" cy="130" rx="9" ry="5" fill="#F87171" opacity=".25"/>${ex}
+    <ellipse class="mouth" cx="100" cy="142" rx="14" ry="4" fill="#7F1D1D"/><path d="M86 140 Q100 150 114 140" fill="none" stroke="#7F1D1D" stroke-width="2" opacity=".5"/></g></svg>`;
+}
+
+/* ============ IDIOM LIBRARY ============ */
+const CATS=["Work","Daily","Feelings","Money","Time","Animals","Food","Nature","People","Success"];
+const CAT_EMOJI={Work:"💼",Daily:"🏠",Feelings:"💛",Money:"💰",Time:"⏰",Animals:"🐾",Food:"🍴",Nature:"🌦️",People:"🧑‍🤝‍🧑",Success:"🏆"};
+const PHRASES = [
+  {id:"bush",cat:"Work",phrase:"beat around the bush",type:"idiom",meaning:"To avoid saying the main point directly.",tamil:"Vishayatha neradiya sollaama suthi suthi pesradhu.",example:"Please stop beating around the bush and tell me the price."},
+  {id:"ground",cat:"Work",phrase:"hit the ground running",type:"idiom",meaning:"To start something and work well and fast from day one.",tamil:"Aarambichathum full speed la velai seiyaradhu.",example:"The new intern hit the ground running on her first day."},
+  {id:"bullet",cat:"Daily",phrase:"bite the bullet",type:"idiom",meaning:"To do something unpleasant because you have no choice.",tamil:"Pidikkaadha vishayatha dhairyama senjudradhu.",example:"I hate dentists, but I'll bite the bullet and go."},
+  {id:"weather",cat:"Nature",phrase:"under the weather",type:"idiom",meaning:"Feeling slightly sick or unwell.",tamil:"Udambu konjam sari illa.",example:"I'm a bit under the weather, so I'll skip the party."},
+  {id:"figure",cat:"Daily",phrase:"figure out",type:"phrasal verb",meaning:"To understand or solve something by thinking.",tamil:"Yosichu puriyaravachu / theervu kandupidikkiradhu.",example:"I can't figure out how to open this file."},
+  {id:"ice",cat:"People",phrase:"break the ice",type:"idiom",meaning:"To make people feel relaxed at the start of a meeting.",tamil:"Pudhusa parkka vara edathula pesa aarambikka.",example:"He told a joke to break the ice."},
+  {id:"moon",cat:"Time",phrase:"once in a blue moon",type:"idiom",meaning:"Very rarely.",tamil:"Romba arithaga / eppavaavadhu dhaan.",example:"I eat sweets once in a blue moon."},
+  {id:"day",cat:"Work",phrase:"call it a day",type:"idiom",meaning:"To stop working for today.",tamil:"Indhaiku podhum nu velaiya mudikkiradhu.",example:"We're tired. Let's call it a day."},
+  {id:"cake",cat:"Daily",phrase:"piece of cake",type:"idiom",meaning:"Something very easy.",tamil:"Romba easy.",example:"The exam was a piece of cake."},
+  {id:"beans",cat:"People",phrase:"spill the beans",type:"idiom",meaning:"To reveal a secret.",tamil:"Rahasiyatha ulari vidradhu.",example:"Who spilled the beans about the surprise party?"}
+];
+/* [phrase, category, meaning, Tanglish, example] */
+const MORE=[
+["get the ball rolling","Work","To start an activity or process.","Oru velaiya aarambichu vidradhu.","Let's get the ball rolling with the first topic."],
+["back to square one","Work","To have to start again from the beginning.","Mudhal la irundhu thirumba aarambikka vendiya nilai.","The client rejected our plan, so we're back to square one."],
+["on the same page","Work","To agree and understand things in the same way.","Ellarum ore purithalodu irukkiradhu.","Let's talk first so we are all on the same page."],
+["think outside the box","Work","To think in a creative, different way.","Vittiyaasama, pudhusa yosikkiradhu.","We need to think outside the box to solve this."],
+["touch base","Work","To contact someone briefly to share updates.","Sirithu pesi update pannikkiradhu.","I'll touch base with you on Monday."],
+["keep me in the loop","Work","To keep someone informed about what is happening.","Enna nadakkudhunu enakku therinjikkittey irukka sollunga.","Please keep me in the loop about the project."],
+["ballpark figure","Work","A rough estimate, not an exact number.","Thoraiyama oru approximate ennikkai.","Can you give me a ballpark figure for the cost?"],
+["cut corners","Work","To do something the cheapest or quickest way, with lower quality.","Velaiya shortcut-la, thara kuraiva seiyaradhu.","Don't cut corners when you build a house."],
+["go the extra mile","Work","To make more effort than expected.","Ethirpaarthadhai vida adhigama muyarchi edukkiradhu.","She always goes the extra mile for her customers."],
+["burn the midnight oil","Work","To work or study very late at night.","Nadu raathiri varai vilichu velai / padippu.","I burned the midnight oil to finish the report."],
+["the ball is in your court","Work","It is your turn to take action or decide.","Ippo mudivu edukka vendiyadhu ungal thaan.","I sent my offer. Now the ball is in your court."],
+["wear many hats","Work","To have many different roles or jobs.","Pala velaigal / poruppugal oruthare seiyaradhu.","In a small startup, everyone wears many hats."],
+["pull your weight","Work","To do your fair share of the work.","Unga pangu velaiya neenga seiyaradhu.","Everyone must pull their weight in this team."],
+["up in the air","Work","Not decided yet.","Innum mudivu aagala.","Our holiday plans are still up in the air."],
+["learn the ropes","Work","To learn how to do a job or activity.","Oru velaiya epdi seiyaradhunu kathukkiradhu.","It took me a month to learn the ropes."],
+["call the shots","Work","To be the person who makes the decisions.","Mudivugal edukkara adhikaaram irukkiradhu.","In this company, the owner calls the shots."],
+["hit the nail on the head","Work","To say or do exactly the right thing.","Sariyana vishayatha dhaan sonneenga.","You hit the nail on the head with that answer."],
+["by the book","Work","Following the rules exactly.","Vidhimuraigal padi mattume seiyaradhu.","Our manager does everything by the book."],
+["bring to the table","Work","To offer something valuable to a team or discussion.","Oru kuzhuvuku value thara kooduyadhai kondu varadhu.","She brings great ideas to the table."],
+["at the end of the day","Work","Finally, when everything is considered.","Ellam paartha apram, kadaisiyaa.","At the end of the day, quality matters most."],
+["raise the bar","Work","To set a higher standard.","Thara alavai uyarthuradhu.","Her work raised the bar for the whole team."],
+["the bottom line","Work","The most important point or final result.","Mukkiyamana mudivu / laabam nashtam.","The bottom line is we need more customers."],
+["a blessing in disguise","Daily","Something that looks bad but turns out good.","Kettadhu pol therinju, apram nalladhaaga maarum vishayam.","Losing that job was a blessing in disguise."],
+["add insult to injury","Daily","To make a bad situation even worse.","Already kettadhula innum kedukkiradhu.","He forgot my birthday, and then he laughed about it. That really added insult to injury."],
+["barking up the wrong tree","Daily","Looking in the wrong place or blaming the wrong person.","Thappana edathula / aalai thedi poradhu.","If you think I took it, you're barking up the wrong tree."],
+["better late than never","Daily","It is better to do something late than not at all.","Illaama irukkaradhu vida thaamadhama aanaalum seiyardhu nallathu.","You finally called me? Well, better late than never."],
+["cry over spilt milk","Daily","To be upset about something that cannot be changed.","Mudinjadha pathi pulambikittu irukkiradhu.","The exam is over. There's no use crying over spilt milk."],
+["every cloud has a silver lining","Daily","Every bad situation has some good side.","Ovvoru kashtathilum oru nalladhu irukkum.","I lost my phone, but I got a new one. Every cloud has a silver lining."],
+["get out of hand","Daily","To become difficult to control.","Kattuppaattai vittu poradhu.","The party got out of hand after midnight."],
+["hang in there","Daily","Don't give up; stay strong.","Vittudaadheenga, sirithu poruthu irunga.","Exams end tomorrow. Hang in there!"],
+["miss the boat","Daily","To miss a chance.","Vaaippai thavara vidradhu.","Book your tickets now or you'll miss the boat."],
+["on the fence","Daily","Unable to decide between two choices.","Edhai thervu seiyaradhunu mudivu edukka mudiyaadha nilai.","I'm on the fence about buying a new phone."],
+["pull someone's leg","Daily","To joke with someone by saying something untrue.","Yaaraiyavadhu kindal panni poi solradhu.","Are you serious or are you pulling my leg?"],
+["take it with a grain of salt","Daily","Don't believe something completely.","Muzhusa nambaama, konjam sandhegathoda eduthukkunga.","Take his stories with a grain of salt."],
+["the last straw","Daily","The final problem that makes you lose patience.","Poruma ellaiya thaandura kadaisi vishayam.","When he broke my laptop, that was the last straw."],
+["throw in the towel","Daily","To give up.","Muyarchiya vittu vidradhu.","After five attempts, he threw in the towel."],
+["when pigs fly","Daily","Something that will never happen.","Orukkaalum nadakkaadhu.","He will clean his room when pigs fly."],
+["don't judge a book by its cover","Daily","Don't judge people or things by how they look.","Veliyila paathu aalai ettai podaadheenga.","He looks rude, but don't judge a book by its cover."],
+["speak of the devil","Daily","Said when a person appears just after you talk about them.","Yaarai pathi pesurom, avanga appo vandhuttanga.","Speak of the devil! We were just talking about you."],
+["the whole nine yards","Daily","Everything possible; the full thing.","Ellaa vishayamum, muzhusa.","They gave us the whole nine yards: food, music and gifts."],
+["twist someone's arm","Daily","To persuade someone strongly.","Oruthara konjam force panni othukka vaikkiradhu.","Okay, you twisted my arm. I'll come to the party."],
+["through thick and thin","Daily","In good times and bad times.","Sandhoshathilum kashtathilum ondraa irukkiradhu.","She stood by me through thick and thin."],
+["jump on the bandwagon","Daily","To join something just because it is popular.","Ellarum seiyaradhunu naanum seiya aarambikkiradhu.","Everyone is learning guitar, so I jumped on the bandwagon."],
+["play it by ear","Daily","To decide as things happen, without a fixed plan.","Munnaadi plan illaama, nadakkardha poruthu mudivu edukkiradhu.","We don't have a plan. Let's play it by ear."],
+["rain on someone's parade","Daily","To spoil someone's happy plan.","Yaarodaiya santhoshatha kedukkiradhu.","I don't want to rain on your parade, but it's too expensive."],
+["see eye to eye","Daily","To agree with someone.","Oruthar karuthukku mathavar othukkiradhu.","My brother and I don't always see eye to eye."],
+["sleep on it","Daily","To think about something overnight before deciding.","Oru raathiri yosichu mudivu edukkiradhu.","Let me sleep on it and tell you tomorrow."],
+["steal the show","Daily","To get all the attention at an event.","Nigazhchiyil ella gavanathaiyum thannai nokki izhukkiradhu.","The little girl stole the show with her dance."],
+["the elephant in the room","Daily","A big problem that everyone avoids talking about.","Ellarukkum theriyum aana yaarum pesaadha periya prachanai.","Money is the elephant in the room in this meeting."],
+["a dime a dozen","Daily","Very common and not special.","Romba saadharanam, ellaa idathilum kidaikkum.","Cheap phone covers are a dime a dozen."],
+["bite off more than you can chew","Daily","To take on more than you can handle.","Samaalikka mudiyaadha alavuku velaiya eduthukkiradhu.","I said yes to three projects. I bit off more than I can chew."],
+["break a leg","Daily","Good luck, often said before a performance.","All the best! (medai nigazhchikku munnaadi solluvaanga).","You have your speech today? Break a leg!"],
+["hit the sack","Daily","To go to bed.","Thoonga poradhu.","I'm tired. I'm going to hit the sack."],
+["hit the road","Daily","To start a journey.","Payanatha aarambikkiradhu.","It's late. We should hit the road."],
+["kill two birds with one stone","Daily","To solve two problems with one action.","Oru muyarchila rendu velai mudikkiradhu.","I'll buy groceries on my way home and kill two birds with one stone."],
+["once bitten, twice shy","Daily","After a bad experience, you become careful.","Oru thadava adi vaangina apram jaagrathaiya irukkiradhu.","He lost money once, so now he's once bitten, twice shy."],
+["the early bird catches the worm","Daily","People who start early get the best results.","Seekiram ezhundhu aarambikkiravanga dhaan nalladhu perranga.","Wake up early. The early bird catches the worm."],
+["actions speak louder than words","Daily","What you do matters more than what you say.","Solradhu vida seiyaradhu dhaan mukkiyam.","He promises a lot, but actions speak louder than words."],
+["a taste of your own medicine","Daily","Getting the same bad treatment you give others.","Nee seiyaradhu unakkey thirumbi varradhu.","He always teases people. Now he got a taste of his own medicine."],
+["easy as pie","Daily","Very easy.","Romba easy.","Making tea is easy as pie."],
+["not my cup of tea","Daily","Not something you like.","Enakku pudikkaadha vishayam.","Horror movies are not my cup of tea."],
+["cross that bridge when we come to it","Daily","Deal with a problem only when it happens.","Prachanai vandha apram paathukkalam.","What if it rains? We'll cross that bridge when we come to it."],
+["better safe than sorry","Daily","It is wise to be careful.","Pin varundhurathai vida munnaadi jaagrathai.","Take an umbrella. Better safe than sorry."],
+["practice makes perfect","Daily","Repeating something helps you become excellent.","Payirchi dhaan ungalai perfect aakkum.","Speak English every day. Practice makes perfect."],
+["go with the flow","Daily","To accept things as they come.","Nadakkardha flow-oda pogalaam.","I don't mind. I'll just go with the flow."],
+["hit the books","Daily","To study hard.","Serious-aa padikka aarambikkiradhu.","I can't come out. I have to hit the books."],
+["in a pickle","Daily","In a difficult situation.","Sikkalaana nilaimai.","I lost my keys and I'm in a pickle."],
+["a long shot","Daily","A small chance of success.","Vetri kidaikka kuraivana vaaippu.","It's a long shot, but let's apply."],
+["call it quits","Daily","To stop doing something, often for good.","Mudikkalaam nu mudivu edukkiradhu.","After ten years, they called it quits."],
+["on cloud nine","Feelings","Extremely happy.","Romba romba santhosham.","She was on cloud nine after the results."],
+["over the moon","Feelings","Very happy.","Aanandhathula midhakkiradhu.","They were over the moon about the baby."],
+["feel blue","Feelings","To feel sad.","Manasu sogama irukkiradhu.","I feel blue on rainy Mondays."],
+["down in the dumps","Feelings","Very sad.","Romba soaga / thalarvaa irukkiradhu.","He's been down in the dumps since he lost his job."],
+["butterflies in your stomach","Feelings","A nervous feeling before something.","Bayathula vayitril padapadappu.","I had butterflies in my stomach before the interview."],
+["cold feet","Feelings","Sudden fear before doing something important.","Seiyapora velaikku munnaadi bayam.","He got cold feet before the wedding."],
+["keep your chin up","Feelings","Stay positive in a hard time.","Thairiyama, nambikkaiyoda irunga.","Keep your chin up. Things will get better."],
+["bite your tongue","Feelings","To stop yourself from saying something.","Pesaama adakki kollradhu.","I wanted to argue, but I bit my tongue."],
+["lose your temper","Feelings","To become very angry.","Kobam thaanga mudiyaama poradhu.","Don't lose your temper over small things."],
+["hit the roof","Feelings","To become extremely angry.","Romba kobam padradhu.","Dad hit the roof when he saw the bill."],
+["blow off steam","Feelings","To release anger or stress.","Kobathai / pressure-ai veliya vidradhu.","I play cricket to blow off steam."],
+["a heart of gold","Feelings","A very kind nature.","Romba nalla manasu.","He looks tough but has a heart of gold."],
+["green with envy","Feelings","Very jealous.","Poramaiyil perumurai.","She was green with envy over my new car."],
+["head in the clouds","Feelings","Dreaming, not thinking practically.","Karpanaila irukkiradhu, nijathula illa.","Wake up! You always have your head in the clouds."],
+["walking on air","Feelings","Extremely happy.","Santhoshathula parakkiradhu.","He's walking on air after the good news."],
+["fit as a fiddle","Feelings","In very good health.","Romba aarokkiyama irukkiradhu.","My grandfather is eighty but fit as a fiddle."],
+["wear your heart on your sleeve","Feelings","To show your feelings openly.","Unga unarvugalai veliya kaattuvadhu.","She wears her heart on her sleeve."],
+["at the end of your rope","Feelings","Having no patience or energy left.","Poruma ellaam mudinju poachu.","With three kids and no sleep, I'm at the end of my rope."],
+["break the bank","Money","To cost too much money.","Romba selavaaga vaikkiradhu.","A small gift won't break the bank."],
+["save for a rainy day","Money","To save money for hard times.","Kashta kaalathukku semichu vaikkiradhu.","Save a little every month for a rainy day."],
+["tighten your belt","Money","To spend less money.","Selavai kuraikkiradhu.","We need to tighten our belts this year."],
+["make ends meet","Money","To earn just enough to live.","Vaazhkkai selavukku mattum sambaadhikkiradhu.","It's hard to make ends meet in a big city."],
+["pay through the nose","Money","To pay too much.","Romba adhigam panam kodukkiradhu.","We paid through the nose for those tickets."],
+["money doesn't grow on trees","Money","Money is not easy to get.","Panam maram-la vilaiyaadhu.","Stop wasting. Money doesn't grow on trees."],
+["in the red","Money","Having less money than you owe.","Kadan adhigama irukkiradhu / nashtam.","The shop has been in the red for months."],
+["on the house","Money","Free, paid by the restaurant or shop.","Kadai kaaranga thara free.","Dessert is on the house today."],
+["cost a pretty penny","Money","To be very expensive.","Romba vilai adhigam.","That watch must have cost a pretty penny."],
+["cost an arm and a leg","Money","To be extremely expensive.","Romba romba vilai-yaana.","A good camera costs an arm and a leg."],
+["bring home the bacon","Money","To earn money for the family.","Kudumbathukku sambaadhikkiradhu.","She brings home the bacon in our house."],
+["a penny saved is a penny earned","Money","Saving money is as good as earning it.","Semikkiradhu kooda sambaadhikkiradhu dhaan.","Don't waste it. A penny saved is a penny earned."],
+["break even","Money","To have no profit and no loss.","Laabam nashtam illaadha nilai.","We just about broke even this month."],
+["in the nick of time","Time","Just before it is too late.","Kadaisi nimidathula.","She arrived in the nick of time."],
+["against the clock","Time","Trying to finish before time ends.","Neram mudiyura munnaadi poratam.","We worked against the clock to finish."],
+["at the eleventh hour","Time","At the last possible moment.","Kadaisi vaaippu neram.","He submitted the form at the eleventh hour."],
+["around the clock","Time","All day and night.","24 manineramum.","Doctors worked around the clock."],
+["time flies","Time","Time passes very quickly.","Neram parakkudhu.","Time flies when you're having fun."],
+["kill time","Time","To do something while waiting.","Kaathirukkum podhu neram pokkura.","I played games to kill time at the airport."],
+["take your time","Time","Don't hurry.","Avasaram illa, nidhaanama.","Take your time. I'll wait."],
+["behind the times","Time","Old-fashioned.","Kaalathukku pinnaadi / pazhaiya mathiri.","His ideas are a bit behind the times."],
+["high time","Time","The right or past time for something.","Ippo seiya vendiya sariyaana neram.","It's high time you started saving."],
+["every now and then","Time","Sometimes, not often.","Appo appo.","I visit my village every now and then."],
+["on the dot","Time","Exactly on time.","Sariyaana neratthula.","The meeting started at nine on the dot."],
+["let sleeping dogs lie","Animals","Don't disturb a situation that is calm.","Amaidhiya irukkura vishayatha kalaikkaadheenga.","I won't ask about it. Let sleeping dogs lie."],
+["raining cats and dogs","Animals","Raining very heavily.","Nirkkaama perumazhai.","I can't go out. It's raining cats and dogs."],
+["the lion's share","Animals","The biggest part.","Periya pangu.","He took the lion's share of the profit."],
+["a wild goose chase","Animals","A useless search.","Payanillaadha thedal.","The map was wrong. It was a wild goose chase."],
+["smell a rat","Animals","To suspect something is wrong.","Edho thappu irukkunu sandhegam.","He said he was sick, but I smell a rat."],
+["black sheep","Animals","A person who is different or shameful in a group.","Kudumbathula kettapeyar vaanginavar.","He is the black sheep of the family."],
+["fish out of water","Animals","Feeling uncomfortable in a new place.","Pudhu idathula asaukariyama irukkiradhu.","In the big city, I felt like a fish out of water."],
+["hold your horses","Animals","Wait, slow down.","Oru nimisham, avasara padaadheenga.","Hold your horses! Let me read it first."],
+["take the bull by the horns","Animals","To face a problem bravely.","Prachanaiya thairiyama edhirkonduradhu.","She took the bull by the horns and talked to the boss."],
+["cat got your tongue","Animals","Why are you so quiet?","Yen pesaama irukeenga?","Cat got your tongue? Answer me!"],
+["dark horse","Animals","A person with hidden talent.","Theriyaadha thiramai irukkara aal.","He was a dark horse and won the contest."],
+["busy as a bee","Animals","Very busy.","Romba busy.","I'm busy as a bee before the festival."],
+["like a bull in a china shop","Animals","Clumsy and careless.","Gavanamillaama udaichikkittu poradhu.","He ran into the room like a bull in a china shop."],
+["you can't teach an old dog new tricks","Animals","Older people find it hard to change habits.","Vayasaanavangala maatha kashtam.","Grandpa won't use a smartphone. You can't teach an old dog new tricks."],
+["a wolf in sheep's clothing","Animals","A bad person pretending to be good.","Nalla aal maari nadikkura kettavan.","Be careful. He's a wolf in sheep's clothing."],
+["open a can of worms","Animals","To start a big, messy problem.","Periya prachanaiya thundi vidradhu.","Asking about money opened a can of worms."],
+["a hot potato","Food","A topic too risky to discuss.","Pesa kashtamana sensitive vishayam.","Politics is a hot potato at family dinners."],
+["in a nutshell","Food","In a few words.","Surukkama sonna.","In a nutshell, we won."],
+["full of beans","Food","Full of energy.","Romba ulaasama.","The kids are full of beans today."],
+["butter someone up","Food","To flatter someone to get something.","Pugazhndhu kaariyam saadhikkiradhu.","He buttered up his boss before asking for leave."],
+["couch potato","Food","A person who sits and watches TV all day.","Eppavum sofa-la utkaandhu TV paakkaravar.","Don't be a couch potato. Go for a walk."],
+["cool as a cucumber","Food","Very calm.","Romba amaidhiya, bayame illama.","He stayed cool as a cucumber during the exam."],
+["bread and butter","Food","Main source of income.","Mukkiya vaazhkkai varumanam.","Teaching is my bread and butter."],
+["the apple of my eye","Food","Someone you love very much.","Romba pidicha, kannu maadhiri.","His daughter is the apple of his eye."],
+["cherry-pick","Food","To choose only the best or most useful ones.","Nalladhu mattum therndhedukkiradhu.","Don't cherry-pick the data."],
+["sour grapes","Food","Pretending not to want what you cannot get.","Kidaikkaadha pazham pulikkum maadhiri.","He says the prize is silly. That's just sour grapes."],
+["go bananas","Food","To go crazy or get very excited.","Paithiyam maadhiri aagiradhu / romba excite.","The fans went bananas when he scored."],
+["icing on the cake","Food","A nice extra on something already good.","Nalladhukku mela oru extra santhosham.","I got the job, and a bonus is the icing on the cake."],
+["too many cooks spoil the broth","Food","Too many people spoil a job.","Adhiga aatkal irundhaa velai kedum.","Let me handle it. Too many cooks spoil the broth."],
+["half-baked","Food","Not well planned.","Muzhusa yosikkaadha, sariyaa plan pannaadha.","That's a half-baked idea."],
+["a bad apple","Food","One bad person who spoils the group.","Kuzhuvaiye kedukkura oru kettavan.","One bad apple can ruin the team."],
+["storm in a teacup","Nature","A big fuss about a small problem.","Sinna vishayatha periya prachanaiya aakkiradhu.","Their fight is just a storm in a teacup."],
+["steal someone's thunder","Nature","To take the praise someone else deserves.","Matravar perumaiya thaan eduthukkiradhu.","Don't steal her thunder. It's her idea."],
+["come rain or shine","Nature","No matter what the weather or situation.","Mazhai vandhaalum veyil adichaalum.","I'll be there, come rain or shine."],
+["on thin ice","Nature","In a risky situation.","Aabathaana nilaiyil irukkiradhu.","You're late again. You're on thin ice with the boss."],
+["tip of the iceberg","Nature","A small visible part of a much bigger problem.","Periya prachanaiyin sirithu mattum therivadhu.","The complaints are just the tip of the iceberg."],
+["a breath of fresh air","Nature","Something new and refreshing.","Pudhusa, refresh-aa irukkura maatram.","The new teacher is a breath of fresh air."],
+["snowed under","Nature","Having too much work.","Velai romba kuvindhu irukkiradhu.","I'm snowed under with assignments."],
+["the calm before the storm","Nature","A quiet time before trouble.","Prachanaikku munnaadi irukkura amaidhi.","It's quiet now, but it's the calm before the storm."],
+["a drop in the ocean","Nature","A very small amount compared to what is needed.","Kadalil oru thuli maadhiri romba sirithu.","My donation is a drop in the ocean."],
+["weather the storm","Nature","To survive a difficult time.","Kashta kaalathai thaandi vandhuduradhu.","The company weathered the storm."],
+["make hay while the sun shines","Nature","Use a good chance while you have it.","Vaaippu irukkum podhe payan paduthikkiradhu.","Study now. Make hay while the sun shines."],
+["give someone the cold shoulder","People","To ignore someone on purpose.","Vendumey oruthara ignore panradhu.","She gave me the cold shoulder after our fight."],
+["lend a hand","People","To help.","Udhavi seiyaradhu.","Can you lend me a hand with these bags?"],
+["put your foot in your mouth","People","To say something embarrassing by mistake.","Thappa pesi mattikkiradhu.","I asked about her job and put my foot in my mouth."],
+["play with fire","People","To do something dangerous.","Aabathoda velaiyaadradhu.","Driving fast in the rain is playing with fire."],
+["keep your fingers crossed","People","To hope for good luck.","Nalladhu nadakkum nu nambikkaiya irukkiradhu.","I'll keep my fingers crossed for your exam."],
+["by heart","People","Memorised completely.","Moolai-la pathichu, mugamaaga.","She knows the poem by heart."],
+["at the drop of a hat","People","Immediately, without much thought.","Udane, yosikkaama.","He argues at the drop of a hat."],
+["head over heels","People","Completely in love.","Romba kaadhalil.","He is head over heels in love with her."],
+["all ears","People","Listening carefully.","Gavanamaa kekka thayaara.","Tell me the story. I'm all ears."],
+["a pain in the neck","People","An annoying person or thing.","Thollai tharra aal / vishayam.","Filling these forms is a pain in the neck."],
+["rule of thumb","People","A simple general guide.","Podhuvaana vazhikaattu vidhi.","As a rule of thumb, drink eight glasses of water."],
+["on your toes","People","Alert and ready.","Echarikkaiya, thayaara irukkiradhu.","Stay on your toes. The inspector may come."],
+["elbow grease","People","Hard physical effort.","Kadina udal uzhaippu.","This floor needs some elbow grease."],
+["keep an eye on","People","To watch carefully.","Kavanamaa paathukkiradhu.","Please keep an eye on my bag."],
+["get along like a house on fire","People","To become friends very quickly.","Romba seekiram nanbargal aagiradhu.","They got along like a house on fire."],
+["two peas in a pod","People","Very similar people.","Rendu perum onnu maadhiri.","The twins are two peas in a pod."],
+["a shoulder to cry on","People","Someone who listens to your problems.","Kashtam sollikka oru aal.","I'm here as a shoulder to cry on."],
+["the talk of the town","People","What everyone is discussing.","Ooru muzhuka pesura vishayam.","Her wedding is the talk of the town."],
+["word of mouth","People","Information spread by people talking.","Aal aala sollitu paravuradhu.","The shop grew by word of mouth."],
+["mind your own business","People","Don't interfere in others' affairs.","Un velaiya paaru.","I didn't ask. Mind your own business."],
+["face the music","People","To accept the bad results of your actions.","Seidhadharku vilaivai edhirkonduradhu.","He broke the window and had to face the music."],
+["fall on deaf ears","People","To be ignored.","Yaarum kaadhula pottukkaama poradhu.","My advice fell on deaf ears."],
+["in the same boat","People","In the same difficult situation.","Ellarukkum ore nilaimai.","We are all in the same boat this month."],
+["nail it","Success","To do something perfectly.","Sirappa seidhu mudikkiradhu.","You nailed your presentation!"],
+["hit the jackpot","Success","To get great luck or success.","Periya adhirshtam adikkiradhu.","We hit the jackpot with this house."],
+["a feather in your cap","Success","An achievement to be proud of.","Perumaipadura saadhanai.","Winning the award is a feather in her cap."],
+["back to the drawing board","Success","To start planning again after failing.","Thirumba mudhal la irundhu plan panradhu.","The test failed, so it's back to the drawing board."],
+["fall flat","Success","To fail to get a good response.","Edhirpaartha vetri kidaikaama poradhu.","His joke fell flat."],
+["go down the drain","Success","To be wasted.","Veenaaga poradhu.","All our hard work went down the drain."],
+["on a roll","Success","Having continued success.","Thodarndhu vetri petru varradhu.","She won again. She's on a roll!"],
+["the sky is the limit","Success","There is no limit to what you can achieve.","Unga saadhanaiku ellaiye illa.","With hard work, the sky is the limit."],
+["rise to the occasion","Success","To do well in a challenge.","Sandharppathukku etha mathiri sirappa seiyaradhu.","He rose to the occasion and saved the match."],
+["make or break","Success","Something that decides success or failure.","Vetri / tholvi mudivu pannum nilai.","This interview is make or break for me."],
+["win-win situation","Success","Good for everyone.","Rendu pakkathukkum laabam.","Sharing the cost is a win-win situation."],
+["get off on the right foot","Success","To start well.","Nalla aarambam.","Arrive early to get off on the right foot."],
+["pass with flying colours","Success","To succeed very well.","Romba nalla mathippenkal-oda vetri.","She passed the exam with flying colours."],
+["the best of both worlds","Success","Enjoying two good things together.","Rendu nalladhum onna kidaikkiradhu.","Working from home gives me the best of both worlds."],
+["break new ground","Success","To do something new and different.","Pudhusa oru vazhiya thirakkiradhu.","The film broke new ground in animation."]
+];
+const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+MORE.forEach(([phrase,cat,meaning,tamil,example])=>PHRASES.push({id:slug(phrase),cat,phrase,type:"idiom",meaning,tamil,example}));
+
+/* ============ VOCABULARY for the "New word" pop-up (single words, not idioms) ============ */
+const WORDS=`diligent|adj|Working carefully and with effort.|Kadinamaa, gavanamaa uzhaikkira.|She is a diligent student who never misses homework.
+ambiguous|adj|Having more than one possible meaning.|Rendu artham varra, therivaaga illaadha.|His answer was ambiguous, so nobody understood it.
+reluctant|adj|Not willing to do something.|Seiya manasu illaadha.|He was reluctant to speak in front of the class.
+genuine|adj|Real and honest, not fake.|Unmaiyaana, nijamaana.|She gave me a genuine smile.
+vague|adj|Not clear or detailed.|Thelivu illaadha.|The instructions were vague.
+thrive|verb|To grow and do very well.|Nalla valarndhu sirakka.|Plants thrive in sunlight.
+hesitate|verb|To pause before doing something because you are unsure.|Thayanga.|Don't hesitate to ask questions.
+procrastinate|verb|To delay doing something.|Seiyaradhai thalli poda.|I procrastinate when I have to clean my room.
+inevitable|adj|Certain to happen; cannot be avoided.|Thavirkka mudiyaadha.|Change is inevitable.
+humble|adj|Not proud; modest.|Thannadakkamaana.|Despite his fame, he stayed humble.
+resilient|adj|Able to recover quickly from trouble.|Kashtathula irundhu seekiram meendu varra.|Children are often very resilient.
+candid|adj|Honest and direct.|Nermaiyaa, veppaa pesura.|Let me be candid: I don't like the plan.
+eager|adj|Very excited to do something.|Aavalodu, thudikkira.|The kids were eager to start.
+fragile|adj|Easily broken.|Ulaindhu poga kudiya, melliya.|Handle the glass carefully. It's fragile.
+abundant|adj|Existing in large amounts.|Niraiya irukkira.|Fruits are abundant in summer.
+scarce|adj|Not enough; rare.|Patrakkurai, arithaana.|Water is scarce in the desert.
+mediocre|adj|Not very good; average.|Saadharanam, sirappu illaadha.|The food was mediocre.
+flawless|adj|Without any mistake.|Kuraiye illaadha.|Her performance was flawless.
+stubborn|adj|Refusing to change your mind.|Pidivaadham pidikkira.|My brother is too stubborn to say sorry.
+curious|adj|Wanting to know or learn.|Therinjikka aarvam ulla.|Kids are curious about everything.
+grateful|adj|Feeling thankful.|Nandri unarvu ulla.|I'm grateful for your help.
+hilarious|adj|Extremely funny.|Romba sirippu varra.|That movie was hilarious.
+exhausted|adj|Extremely tired.|Romba kalaippaana.|I was exhausted after the trip.
+anxious|adj|Worried and nervous.|Kavalai, bayam ulla.|He felt anxious before the results.
+confident|adj|Sure about yourself.|Nambikkaiyoda irukkira.|She is confident about the interview.
+improve|verb|To become or make better.|Munnetram adaiya.|Reading helps you improve your English.
+achieve|verb|To succeed in reaching a goal.|Saadhikka, adaiya.|She worked hard to achieve her dream.
+postpone|verb|To move to a later time.|Thalli vaikka.|They postponed the meeting to Friday.
+complain|verb|To say you are unhappy about something.|Puhaar solla.|Customers complained about the delay.
+apologize|verb|To say sorry.|Manippu ketka.|I apologize for being late.
+recommend|verb|To suggest something as good.|Parindhurai seiya.|Can you recommend a good book?
+encourage|verb|To give someone confidence.|Ookkam kodukka.|My teacher encouraged me to speak.
+convince|verb|To make someone believe something.|Nambavaikka.|I couldn't convince him to join.
+borrow|verb|To take something and return it later.|Kadan vaangi payan paduthika.|Can I borrow your pen?
+afford|verb|To have enough money for something.|Vaanga panam irukka.|I can't afford a new phone.
+deserve|verb|To earn something by your actions.|Thaguthi irukka.|You deserve a break.
+admire|verb|To respect and like someone.|Mathikka, rasikka.|I admire her courage.
+avoid|verb|To stay away from something.|Thavirkka.|Avoid junk food.
+depend|verb|To need or rely on something.|Saarndhu irukka.|It depends on the weather.
+suggest|verb|To offer an idea.|Yosanai solla.|I suggest we leave early.
+prefer|verb|To like one thing more.|Virumbi therndhedukka.|I prefer tea to coffee.
+realize|verb|To understand suddenly.|Purindhu kolla.|I realized I forgot my keys.
+manage|verb|To succeed in doing something difficult.|Samaalikka.|She managed to finish on time.
+notice|verb|To see or become aware of.|Gavanikka.|Did you notice the new painting?
+pretend|verb|To act as if something is true.|Nadikka.|The kids pretend to be doctors.
+opportunity|noun|A chance to do something good.|Vaaippu.|This job is a great opportunity.
+challenge|noun|Something difficult that tests you.|Savaal.|Learning a language is a challenge.
+advantage|noun|Something that helps you.|Sadhagamaana amsam.|Speaking English is an advantage.
+habit|noun|Something you do regularly.|Palakkam.|Reading daily is a good habit.
+deadline|noun|The last time to finish something.|Mudikka vendiya kadaisi neram.|The deadline is tomorrow at noon.
+schedule|noun|A plan of times and tasks.|Neram-pattiyal.|My schedule is full this week.
+environment|noun|The natural world around us.|Suttrusool.|We must protect the environment.
+experience|noun|Knowledge from doing something.|Anubavam.|She has five years of experience.
+mistake|noun|Something wrong done by accident.|Thappu.|Everyone makes mistakes.
+patience|noun|Staying calm while waiting.|Poruma.|Teaching needs patience.
+courage|noun|Being brave.|Dhairyam.|It takes courage to speak up.
+gratitude|noun|Feeling thankful.|Nandri unarvu.|She showed gratitude with a card.
+priority|noun|Something more important than others.|Mudhanmai.|Health is my first priority.
+routine|noun|Things you do in a regular order.|Dhinasari murai.|My morning routine starts at six.
+reliable|adj|Can be trusted.|Nambikkaiyaana.|He is a reliable friend.
+efficient|adj|Doing work well without wasting time.|Seekiram, nalla seiyara.|She is an efficient manager.
+flexible|adj|Able to change easily.|Vazhaindhu kudukkira.|My work hours are flexible.
+ordinary|adj|Normal, not special.|Saadharana.|It was an ordinary day.
+peaceful|adj|Calm and quiet.|Amaidhiyaana.|The village is peaceful.
+enormous|adj|Very large.|Migaperiya.|They live in an enormous house.
+brilliant|adj|Very clever or bright.|Arumaiyaana.|That's a brilliant idea!
+awkward|adj|Uncomfortable or embarrassing.|Asaukariyamaana.|There was an awkward silence.
+cautious|adj|Careful to avoid danger.|Echarikkaiyaana.|Be cautious when crossing the road.
+ancient|adj|Very old.|Pazhaiya, praachina.|We visited an ancient temple.
+awesome|adj|Very good; amazing.|Arputhamaana.|The concert was awesome!
+annoying|adj|Making you a little angry.|Thollai tharra.|The noise is annoying.
+accomplish|verb|To complete successfully.|Saadhichu mudikka.|We accomplished our goal.
+gather|verb|To collect or come together.|Serkka, koodu.|People gathered in the hall.
+wander|verb|To walk around without a goal.|Suthi thirinjuka.|We wandered around the market.
+whisper|verb|To speak very softly.|Kaadhula mellamaa pesa.|She whispered a secret.
+forgive|verb|To stop being angry at someone.|Mannikka.|Please forgive me.
+ignore|verb|To pay no attention.|Kandukkaama vida.|Don't ignore the warning.
+describe|verb|To say what something is like.|Vivarikka.|Describe your best friend.
+compare|verb|To look at how things are alike or different.|Oppidu.|Don't compare yourself with others.
+gentle|adj|Soft and kind.|Mellana, magizhvaana.|He is gentle with animals.
+generous|adj|Happy to give to others.|Vaari vazhangura.|She is generous with her time.
+selfish|adj|Caring only about yourself.|Suyanalamaana.|Don't be selfish. Share it.
+ambitious|adj|Having strong goals.|Latchiya aarvam ulla.|He is ambitious and wants to start a company.
+fluent|adj|Able to speak a language smoothly.|Thadaiyillaama, saralamaa pesura.|She is fluent in three languages.
+vocabulary|noun|All the words you know.|Sol valam.|Reading new books builds your vocabulary.
+pronounce|verb|To say a word in the correct way.|Sariyaa uchcharikka.|How do you pronounce this word?
+accent|noun|The way a person's speech sounds.|Pesum vidham, uchcharippu.|She has a lovely accent.
+confusing|adj|Hard to understand.|Kuzhappamaana.|The map was confusing.
+sincere|adj|Honest and meaning what you say.|Unmaiyaana manasoda.|Please accept my sincere thanks.
+punctual|adj|Arriving on time.|Neratthukku varra.|He is always punctual.
+cheerful|adj|Happy and positive.|Ulaasamaana.|She is a cheerful girl.
+polite|adj|Having good manners.|Mariyaadhaiyaana.|It's polite to say thank you.
+rude|adj|Not polite.|Mariyaadhai illaadha.|It's rude to interrupt.
+`.trim().split("\n").map(l=>{const [w,pos,meaning,tamil,example]=l.split("|");return {w,pos,meaning,tamil,example}});
+
+/* ============ STATE ============ */
+const KEY="sitcom-english-v5";
+const fresh=()=>({xp:0,streak:0,last:null,done:{},seen:{},extra:[],wseen:{}});
+let S=load();
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&typeof v==="object"?Object.assign(fresh(),v):fresh()}catch(e){return fresh()}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function addXP(n){
+  S.xp+=n;
+  const today=new Date().toISOString().slice(0,10);
+  if(S.last!==today){
+    const y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+    S.streak=S.last===y?S.streak+1:1;S.last=today;
+  }
+  save();renderStats();
+}
+const $=(s,r=document)=>r.querySelector(s);
+const app=$("#app"),backBtn=$("#back");
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function renderStats(){$("#xp").textContent="⭐ "+S.xp+" XP";$("#streak").textContent="🔥 "+S.streak}
+function meter(t){
+  const e=t.energy;
+  return `<div class="meter" title="Energy ${e.level} of 5"><span>${e.emoji} ${esc(e.label)}</span><span class="bars" aria-hidden="true">${[1,2,3,4,5].map(i=>`<i style="--h:${8+i*5}px;${i<=e.level?"background:"+e.color:""}"></i>`).join("")}</span></div>`;
+}
+
+/* Every tutor owns a different slice of the idiom library, so each series and tutor teaches different idioms. */
+PHRASES.forEach(p=>{p.topic=p.cat});
+const RULES={gary:[["Work",0]],rita:[["Work",1]],priya:[["Daily",0]],raj:[["Daily",1]],mama:[["Food",0],["Feelings",0]],mia:[["Feelings",1],["People",0]],leo:[["People",1],["Success",0]],
+  sunny:[["Success",1],["Time",0]],nikhil:[["Time",1],["Nature",0]],anu:[["Nature",1],["Animals",0]],dev:[["Animals",1],["Money",0]],vikram:[["Money",1],["Food",1]]};
+TUTORS.forEach(t=>{t.idioms=[];t.topics=RULES[t.id].map(r=>r[0]).filter((c,i,arr)=>arr.indexOf(c)===i)});
+CATS.forEach(c=>PHRASES.filter(p=>p.cat===c).forEach((p,i)=>{
+  const t=TUTORS.find(t=>RULES[t.id].some(([cc,par])=>cc===c&&par===i%2));
+  p.owner=t.id;t.idioms.push(p);
+}));
+function addExtra(x,owner){
+  const key=String(x.phrase||"").toLowerCase().trim();
+  if(!key||PHRASES.some(p=>p.phrase.toLowerCase()===key))return null;
+  const p={id:"x-"+slug(key),cat:x.cat||"More",topic:x.cat||"More",phrase:key,type:"idiom",meaning:x.meaning,tamil:x.tamil||"",example:x.example||"",owner};
+  PHRASES.push(p);(TUTORS.find(t=>t.id===owner)||TUTORS[0]).idioms.push(p);return p;
+}
+(S.extra||[]).forEach(x=>addExtra(x,x.owner));
+const tutorOf=p=>TUTORS.find(t=>t.id===p.owner)||TUTORS[0];
+const seriesOf=t=>SERIES.find(s=>s.tutors.includes(t.id))||SERIES[0];
+const teachChips=t=>`<div class="teach">${t.topics.map(c=>`<span>${CAT_EMOJI[c]} ${esc(c)}</span>`).join("")}</div>`;
+let hideT=null;
+function hideNW(){clearTimeout(hideT);const e=document.getElementById("nw");if(e)e.remove()}
+
+let sceneRun=0,screen="home",curSeries=null,tutor=null,curPhrase=null,history=[],voiceOn=true,laughOn=true,busy=false,sampleFn=null,ch=0;
+
+/* AI tutor: the page asks Claude through the viewer's own session, so no API key or server is needed. */
+const DIAG={};
+const diagText=()=>"server chat";
+/* The AI runs on your own server (see server.js). The API key never reaches the browser. */
+async function apiSample(prompt){
+  let r;
+  try{r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})})}
+  catch(e){throw {code:"network"}}
+  if(r.status===429)throw {code:"rate_limited"};
+  if(!r.ok)throw {code:"server"};
+  const j=await r.json();return {text:j.text||""};
+}
+async function getSample(){sampleFn=apiSample;return sampleFn}
+async function enableAI(){}
+getSample();
+
+/* ============ VOICES: female tutors get a female voice, male tutors a male voice ============ */
+let VOICES=[];
+function loadVoices(){try{VOICES=(window.speechSynthesis&&speechSynthesis.getVoices())||[]}catch(e){VOICES=[]}}
+loadVoices();
+try{window.speechSynthesis&&speechSynthesis.addEventListener("voiceschanged",loadVoices)}catch(e){}
+const FEM=/female|woman|samantha|zira|susan|karen|moira|tessa|victoria|fiona|aria|jenny|hazel|libby|heera|veena|catherine|allison|ava\b|joanna|kendra|salli|serena|sonia|natasha|linda|google us english/i;
+const MAL=/\bmale\b|david|mark\b|daniel|alex\b|fred\b|george|guy\b|ryan|james|rishi|thomas|oliver|arthur|brian|matthew|reed|eddy|rocko|ravi|prabhat/i;
+function pickVoice(t){
+  const en=VOICES.filter(v=>/^en/i.test(v.lang));
+  if(t.g==="f")return en.find(v=>FEM.test(v.name))||null;
+  return en.find(v=>MAL.test(v.name)&&!/female/i.test(v.name))||null;
+}
+function utter(text,t){
+  const u=new SpeechSynthesisUtterance(text);u.lang="en-US";
+  const v=pickVoice(t);
+  if(v){u.voice=v;u.lang=v.lang;u.pitch=1+(t.voice[0]-1)*.4}
+  else u.pitch=t.g==="f"?Math.max(1.25,t.voice[0]):Math.min(.7,t.voice[0]);
+  u.rate=t.voice[1];
+  return u;
+}
+
+/* ============ SOUND: a tiny laugh track made from filtered noise ============ */
+let actx=null;
+function laughSound(){
+  const sign=$("#laugh");
+  if(sign){sign.classList.add("go");setTimeout(()=>sign.classList.remove("go"),1500)}
+  if(!laughOn)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==="suspended")actx.resume();
+    const len=actx.sampleRate*1.4,buf=actx.createBuffer(1,len,actx.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+    const src=actx.createBufferSource();src.buffer=buf;
+    const f=actx.createBiquadFilter();f.type="bandpass";f.frequency.value=1100;f.Q.value=.7;
+    const g=actx.createGain(),t0=actx.currentTime;
+    g.gain.setValueAtTime(0,t0);
+    for(let k=0;k<7;k++){const t=t0+k*.17;g.gain.linearRampToValueAtTime(.16-k*.012,t+.04);g.gain.linearRampToValueAtTime(.03,t+.14)}
+    g.gain.linearRampToValueAtTime(0,t0+1.3);
+    src.connect(f);f.connect(g);g.connect(actx.destination);src.start();
+  }catch(e){}
+}
+
+/* ============ NAVIGATION ============ */
+function stopSpeech(){sceneRun++;try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}}
+const FOOT=`<p class="note">Tutors are original characters inspired by each show's style. Not affiliated with any show or studio.</p>`;
+
+function showHome(){
+  stopVC();closeLib();
+  stopSpeech();tutor=null;curSeries=null;curPhrase=null;screen="home";backBtn.hidden=true;
+  app.innerHTML=`
+    <section class="hero">
+      <span class="kicker">★ Now streaming · English with attitude</span>
+      <h1>Learn English from <span class="hl">sitcoms</span>, not textbooks.</h1>
+      <p class="sub">Flip the channel, pick a funny tutor, watch a tiny scene, then talk back. Tanglish welcome.</p>
+      <button class="btn alt" id="browse">📚 Browse all ${PHRASES.length} idioms</button>
+    </section>
+    <section class="tvwrap">
+      <div class="tv"><div class="screen" id="scr"><div class="static" id="stat"></div><div class="scr-in" id="scrin"></div></div>
+        <div class="knobs"><span class="knob"></span><span class="grille"></span><span class="knob"></span></div></div>
+      <aside class="remote pop"><div class="rh">▶ CHANNEL GUIDE</div>
+        <div class="chlist">${SERIES.map((s,i)=>`<button class="ch" data-i="${i}"><span class="num">CH ${i+1}</span><span>${esc(s.name)}</span><span aria-hidden="true">${s.emoji}</span></button>`).join("")}</div>
+      </aside>
+    </section>${FOOT}`;
+  app.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>tune(+b.dataset.i,true));
+  $("#browse").onclick=openLib;
+  tune(ch,false);
+  window.scrollTo(0,0);
+  hideNW();hideT=setTimeout(showNewWord,1200);
+}
+function tune(i,flash){
+  ch=i;const s=SERIES[i],scr=$("#scr");if(!scr)return;
+  scr.style.setProperty("--c",s.color);
+  app.querySelectorAll("[data-i]").forEach(b=>b.classList.toggle("on",+b.dataset.i===i));
+  if(flash){const st=$("#stat");st.classList.remove("on");void st.offsetWidth;st.classList.add("on")}
+  const cast=s.tutors.map(id=>TUTORS.find(t=>t.id===id));
+  $("#scrin").innerHTML=`<span class="chnum">CH ${String(i+1).padStart(2,"0")} · ${s.tutors.length} TUTORS · ${cast.reduce((n,t)=>n+t.idioms.length,0)} IDIOMS</span>
+    <div class="scr-main"><span class="scr-emoji" aria-hidden="true">${s.emoji}</span><h2 class="scr-title">${esc(s.name)}</h2><p class="scr-about">${esc(s.about)}</p>
+      <button class="btn alt" id="tune">▶ TUNE IN</button></div>
+    <div class="scr-cast" style="--spd:1">${cast.map(t=>`<div>${avatar(t)}</div>`).join("")}</div>`;
+  $("#tune").onclick=()=>showTutors(s.id);
+}
+
+function showTutors(sid){
+  stopVC();hideNW();stopSpeech();tutor=null;curPhrase=null;screen="tutors";
+  curSeries=SERIES.find(s=>s.id===sid);
+  backBtn.textContent="◀ CHANNELS";backBtn.hidden=false;
+  const list=curSeries.tutors.map(id=>TUTORS.find(t=>t.id===id));
+  app.innerHTML=`
+    <section class="titlecard" style="--c:${curSeries.color}">
+      <span class="kicker">★ Opening credits ★</span>
+      <h1>${curSeries.emoji} ${esc(curSeries.name)}</h1>
+      <p>Tonight's cast. Who's teaching you?</p>
+    </section>
+    <div class="cast">${list.map((t,i)=>`
+      <article class="pop cc ${i%2?"r":"l"}" data-t="${t.id}" style="--aura:${t.energy.color};--spd:${t.energy.speed}">
+        <div class="cc-pic">${avatar(t)}</div>
+        <h3>${esc(t.name)}</h3><div class="role">${esc(t.role)}</div>
+        ${meter(t)}
+        <div class="role">Teaches ${t.idioms.length} idioms</div>${teachChips(t)}
+        <blockquote>“${esc(t.greet)}”</blockquote>
+        <button class="btn">🎬 Cast ${esc(t.name)}</button>
+      </article>`).join("")}</div>${FOOT}`;
+  app.querySelectorAll("[data-t]").forEach(c=>c.onclick=()=>openRoom(c.dataset.t));
+  window.scrollTo(0,0);
+}
+
+function goBack(){ if(screen==="room"&&curSeries)showTutors(curSeries.id); else showHome(); }
+backBtn.onclick=goBack;
+$("#logo").onclick=showHome;
+
+/* ============ STUDIO FLOOR (room) ============ */
+function progress(){
+  if(!tutor)return;
+  const n=tutor.idioms.filter(p=>S.done[p.id]).length,N=tutor.idioms.length;
+  const bar=$("#prog");if(bar)bar.style.width=Math.min(100,n/N*100)+"%";
+  const c=$("#pcount");if(c)c.textContent=n+" of "+N+" of "+tutor.name+"'s idioms used";
+}
+function openRoom(id,first){
+  stopVC();hideNW();tutor=TUTORS.find(t=>t.id===id);if(!curSeries||!curSeries.tutors.includes(tutor.id))curSeries=seriesOf(tutor);history=[];curPhrase=null;busy=false;screen="room";
+  backBtn.textContent="◀ RECAST";backBtn.hidden=false;
+  app.innerHTML=`
+  <div class="set" id="room" style="--spd:${tutor.energy.speed};--aura:${tutor.energy.color}">
+    <section class="pop c-card" id="ccard">
+      <div class="cpic">${avatar(tutor)}</div>
+      <h3>${esc(tutor.name)}</h3><div class="role">${esc(tutor.role)}</div>${meter(tutor)}${teachChips(tutor)}
+      <div class="season" id="pcount" style="margin-top:8px"></div><div class="prog" style="width:100%"><i id="prog" style="width:0"></i></div>
+      <div class="tog"><button class="ghost" id="vtog">🔊 Voice</button><button class="ghost" id="lt">😂 Laughs</button></div>
+    </section>
+    <div class="r-main">
+      <div class="mh"><div><span class="tag" id="ptype"></span><h2 class="ep-title" id="ptitle"></h2></div>
+        <button class="btn alt" id="openlib">📚 Idioms</button></div>
+      <div class="monitor"><div class="mbar"><span class="rec"><i></i> REC</span><span class="sign" id="laugh">LAUGH</span><span id="take"></span></div>
+        <div id="stagebox"></div></div>
+      <section class="pop lesson" id="lesson"></section>
+      <section class="pop script" aria-label="Chat with ${esc(tutor.name)}">
+        <div class="script-h"><span>Talk to ${esc(tutor.name)}</span><span><button class="ghost" id="enai" type="button" hidden style="padding:2px 10px;font-size:12px">🔑 Enable AI</button> <span id="vstat"></span></span></div>
+        <div class="log" id="log" role="log" aria-live="polite"></div>
+        <form class="bar" id="chatform">
+          <button class="mic" id="mic" type="button" aria-label="Start voice chat" title="Voice chat">🎙️ Talk</button>
+          <input type="text" id="inp" placeholder="Type, or tap 🎙️ Talk and speak…" autocomplete="off" aria-label="Your message">
+          <button class="btn" id="send" type="submit">Send</button>
+        </form>
+      </section>
+    </div>
+  </div>`;
+  $("#vtog").textContent=voiceOn?"🔊 Voice on":"🔇 Voice off";
+  $("#lt").textContent=laughOn?"😂 Laughs on":"🙊 Laughs off";
+  $("#vtog").onclick=()=>{voiceOn=!voiceOn;$("#vtog").textContent=voiceOn?"🔊 Voice on":"🔇 Voice off";if(!voiceOn)stopSpeech()};
+  $("#lt").onclick=()=>{laughOn=!laughOn;$("#lt").textContent=laughOn?"😂 Laughs on":"🙊 Laughs off"};
+  $("#openlib").onclick=openLib;
+  $("#mic").onclick=toggleVC;$("#enai").onclick=enableAI;getSample().then(s=>{const b=$("#enai");if(b&&s)b.hidden=true});
+  $("#chatform").onsubmit=e=>{e.preventDefault();send()};
+  libTab="mine";libTopic="All";libQ="";
+  selectPhrase(first||tutor.idioms[0].id);
+  botSay(tutor.greet);
+  window.scrollTo(0,0);
+}
+
+/* ============ IDIOM LIBRARY DRAWER ============ */
+let libNote="",libTopic="All",libQ="",libTab="all";
+function buildDrawer(){
+  if($("#drawer"))return;
+  const sc=document.createElement("div");sc.className="scrim";sc.id="scrim";sc.hidden=true;
+  const d=document.createElement("aside");d.className="drawer";d.id="drawer";d.setAttribute("aria-label","Idiom library");d.setAttribute("aria-hidden","true");
+  d.innerHTML=`<div class="dr-h"><h3>📚 Idiom library</h3><button class="ghost" id="dr-x">✕ Close</button></div>
+    <div class="tabs" id="dr-tabs"></div><div class="dr-s"><input type="text" id="dr-q" placeholder="Search any idiom or meaning…" autocomplete="off" aria-label="Search idioms"></div>
+    <div class="topics" id="dr-tp"></div><div class="dr-list" id="dr-list"></div>`;
+  document.body.append(sc,d);
+  sc.onclick=closeLib;$("#dr-x").onclick=closeLib;
+  $("#dr-q").oninput=e=>{libQ=e.target.value;renderLib()};
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeLib()});
+}
+function openLib(){libTab=(screen==="room"&&tutor)?"mine":"all";libTopic="All";buildDrawer();renderLib();$("#scrim").hidden=false;$("#drawer").classList.add("open");$("#drawer").setAttribute("aria-hidden","false");setTimeout(()=>$("#dr-q").focus(),250)}
+function closeLib(){const d=$("#drawer");if(!d)return;d.classList.remove("open");d.setAttribute("aria-hidden","true");$("#scrim").hidden=true}
+function renderLib(){
+  const inRoom=screen==="room"&&tutor,pool=(inRoom&&libTab==="mine")?tutor.idioms:PHRASES;
+  $("#dr-tabs").innerHTML=inRoom?`<button class="tp ${libTab==="mine"?"on":""}" data-tab="mine">${esc(tutor.name)}'s idioms (${tutor.idioms.length})</button><button class="tp ${libTab==="all"?"on":""}" data-tab="all">All idioms (${PHRASES.length})</button>`:`<span class="tp on">All ${PHRASES.length} idioms · tap one to learn it with its tutor</span>`;
+  $("#dr-tabs").querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{libTab=b.dataset.tab;libTopic="All";renderLib()});
+  const tp=Array.from(new Set(["All",...pool.map(p=>p.topic)]));
+  $("#dr-tp").innerHTML=tp.map(t=>`<button class="tp ${t===libTopic?"on":""}" data-t="${esc(t)}">${esc(t)}</button>`).join("");
+  $("#dr-tp").querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{libTopic=b.dataset.t;renderLib()});
+  const q=libQ.trim().toLowerCase();
+  const list=pool.map((p,i)=>({p,i})).filter(({p})=>(libTopic==="All"||p.topic===libTopic)&&(!q||p.phrase.toLowerCase().includes(q)||p.meaning.toLowerCase().includes(q)));
+  $("#dr-list").innerHTML=list.map(({p,i})=>`<button class="ep ${curPhrase&&curPhrase.id===p.id?"on":""}" data-p="${p.id}"><span class="n">${String(i+1).padStart(3,"0")}</span><span>${esc(p.phrase)}</span><span class="ok">${S.done[p.id]?"✓ ":""}${(!inRoom||libTab==="all")?esc(tutorOf(p).name):""}</span></button>`).join("")
+    ||`<div class="dr-empty"><span>Not in the library yet${q?` — “${esc(libQ.trim())}”`:""}.</span>${q?`<button class="btn" id="ask-ai">✨ Ask AI about it</button>`:""}</div>`;
+  if(inRoom&&libTab==="mine"&&!q)$("#dr-list").insertAdjacentHTML("beforeend",`<div class="dr-empty"><span>${libNote?esc(libNote):"Want more? "+esc(tutor.name)+" can find new idioms that are not in the library yet."}</span><button class="btn" id="more-ai">✨ Get 8 more idioms from ${esc(tutor.name)}</button></div>`);
+  $("#dr-list").querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>chooseIdiom(b.dataset.p));
+  const mb=$("#more-ai");if(mb)mb.onclick=()=>moreIdioms(mb);
+  const ai=$("#ask-ai");if(ai)ai.onclick=()=>aiIdiom(libQ.trim(),ai);
+}
+function chooseIdiom(id){
+  closeLib();
+  const p=PHRASES.find(x=>x.id===id),ow=tutorOf(p);
+  if(screen==="room"&&tutor&&tutor.id===ow.id){selectPhrase(id)}
+  else{curSeries=seriesOf(ow);openRoom(ow.id,id)}
+}
+async function moreIdioms(btn){
+  btn.disabled=true;btn.textContent="Connecting to AI…";
+  if(!(await getSample())){btn.textContent="AI is not available here right now";return}
+  btn.textContent="Finding new idioms…";
+  const known=PHRASES.map(p=>p.phrase).join("; ");
+  try{
+    const r=await sampleFn(`List 8 real English idioms (mix American, British, Australian and Indian English) about: ${tutor.topics.join(", ")}. Style: ${tutor.persona}\nDo NOT include any of these idioms: ${known}\nFor a Tamil-speaking learner. Reply with ONLY a JSON array of 8 objects: {"phrase":"lower case idiom","meaning":"one simple sentence","tamil":"short explanation in Tamil written in English letters (Tanglish)","example":"one natural sentence using the idiom"}`,{cache:false});
+    const m=(r.text||"").match(/\[[\s\S]*\]/);const arr=JSON.parse(m[0]);let n=0;
+    arr.forEach(x=>{if(x&&x.phrase&&x.meaning){const p=addExtra({phrase:x.phrase,meaning:x.meaning,tamil:x.tamil,example:x.example,cat:"More"},tutor.id);if(p){S.extra.push({phrase:p.phrase,meaning:p.meaning,tamil:p.tamil,example:p.example,owner:tutor.id,cat:"More"});n++}}});
+    save();libNote=n?"Added "+n+" new idioms to "+tutor.name+"'s set. Tap again for more.":"Nothing new this time. Try again.";
+    renderLib();progress();
+  }catch(e){btn.disabled=false;btn.textContent="Couldn't get new ones. Try again"}
+}
+/* Any idiom from anywhere in the world: the AI explains it and it joins the library for this visit. */
+async function aiIdiom(q,btn){
+  btn.disabled=true;btn.textContent="Connecting to AI…";
+  if(!(await getSample())){btn.textContent="AI is not available here right now";return}
+  btn.textContent="Asking…";
+  try{
+    const r=await sampleFn(`Explain the idiom or saying "${q}" for a Tamil-speaking English learner. If it is from another language, give the closest English idiom with the same meaning. Reply with ONLY a JSON object: {"phrase":"the English idiom in lower case","meaning":"one simple sentence","tamil":"short Tamil explanation written in English letters (Tanglish)","example":"one natural example sentence using the idiom"}`,{cache:false});
+    const m=(r.text||"").match(/\{[\s\S]*\}/);if(!m)throw 0;
+    const j=JSON.parse(m[0]);if(!j.phrase||!j.meaning)throw 0;
+    const ow=tutor||TUTORS[0];
+    let p=addExtra({phrase:j.phrase,meaning:j.meaning,tamil:j.tamil,example:j.example,cat:"More"},ow.id);
+    if(p)S.extra.push({phrase:p.phrase,meaning:p.meaning,tamil:p.tamil,example:p.example,owner:ow.id,cat:"More"});
+    else p=PHRASES.find(x=>x.phrase.toLowerCase()===String(j.phrase).toLowerCase().trim());
+    save();libQ="";$("#dr-q").value="";chooseIdiom(p.id);
+  }catch(e){btn.disabled=false;btn.textContent="Couldn't get that. Try again";}
+}
+
+/* ============ NEW WORD POP-UP (a vocabulary word, not an idiom) ============ */
+let nwWord=null,nwOpen=false;
+function pickNew(){
+  let pool=WORDS.filter(w=>!S.wseen[w.w]);
+  if(!pool.length){S.wseen={};pool=WORDS.slice()}
+  const w=pool[Math.floor(Math.random()*pool.length)];S.wseen[w.w]=1;save();return w;
+}
+function showNewWord(){
+  if(screen!=="home")return;
+  nwWord=pickNew();nwOpen=false;
+  let el=$("#nw");if(!el){el=document.createElement("aside");el.id="nw";el.className="nw";el.setAttribute("aria-label","New word");document.body.appendChild(el)}
+  el.style.animation="none";void el.offsetWidth;el.style.animation="";
+  drawNW();
+}
+function drawNW(){
+  const el=$("#nw"),w=nwWord;if(!el||!w)return;
+  el.innerHTML=`<div class="nw-top"><span class="tag">✨ New word</span><button class="nw-x" id="nw-x" aria-label="Close">✕</button></div>
+    <button class="nw-w" id="nw-w">${esc(w.w)} <small>${esc(w.pos)}</small></button>
+    ${nwOpen?`<div class="nw-body"><div><b>Meaning:</b> ${esc(w.meaning)}</div><div><b>தமிழ்:</b> ${esc(w.tamil)}</div><div class="ex">“${esc(w.example)}”</div>
+      <div class="nw-btns"><button class="ghost" id="nw-h">🔊 Hear</button><button class="ghost" id="nw-n">Next word ➜</button></div></div>`
+      :`<div class="nw-hint">Tap the word to see meaning + example</div>`}`;
+  $("#nw-x").onclick=()=>{el.remove()};
+  $("#nw-w").onclick=()=>{nwOpen=!nwOpen;drawNW()};
+  if(nwOpen){
+    $("#nw-h").onclick=()=>{try{speechSynthesis.cancel();speechSynthesis.speak(utter(w.w+". "+w.example,TUTORS.find(t=>t.id==="priya")))}catch(e){}};
+    $("#nw-n").onclick=()=>{nwWord=pickNew();nwOpen=true;drawNW()};
+  }
+}
+
+/* ============ VOICE CHAT: you talk, the tutor listens, answers out loud, then listens again ============ */
+let rec=null,vc=false,noSpeech=0;
+const SRC=()=>window.SpeechRecognition||window.webkitSpeechRecognition;
+function vstat(t){const e=$("#vstat");if(e)e.textContent=t}
+function micBtn(on){const m=$("#mic");if(!m)return;m.classList.toggle("on",on);m.textContent=on?"⏹ Stop":"🎙️ Talk"}
+function toggleVC(){
+  if(vc){stopVC();return}
+  if(!SRC()){add("ai","Voice input isn't supported in this browser. Try Chrome or Edge. You can still type, and I'll answer out loud!");return}
+  vc=true;noSpeech=0;voiceOn=true;const vt=$("#vtog");if(vt)vt.textContent="🔊 Voice on";
+  micBtn(true);stopSpeech();listen();
+}
+function stopVC(){
+  vc=false;try{rec&&rec.abort()}catch(e){}rec=null;micBtn(false);vstat("");
+}
+function listen(){
+  if(!vc||rec)return;
+  if(busy){setTimeout(listen,300);return}
+  try{if(window.speechSynthesis&&speechSynthesis.speaking){setTimeout(listen,300);return}}catch(e){}
+  try{
+    const r=new (SRC())();rec=r;r.lang="en-IN";r.interimResults=true;r.maxAlternatives=1;
+    r.onstart=()=>vstat("🎧 Listening… speak now");
+    r.onresult=e=>{let t="";for(const x of e.results)t+=x[0].transcript;$("#inp").value=t};
+    r.onerror=e=>{
+      if(e.error==="not-allowed"||e.error==="service-not-allowed"){add("ai","I can't hear you because this view blocks the microphone. Type your line and I'll still answer out loud. (Allow the mic for this page in the browser if it asks.)");stopVC()}
+      else if(e.error==="audio-capture"){add("ai","I can't find a microphone on this device.");stopVC()}
+      else if(e.error==="network"){add("ai","Voice recognition needs an internet connection. Please type for now.");stopVC()}
+    };
+    r.onend=()=>{
+      rec=null;if(!vc)return;
+      const v=($("#inp").value||"").trim();
+      if(v){noSpeech=0;$("#inp").value="";vstat("💭 "+tutor.name+" is thinking…");ask(v,v)}
+      else if(++noSpeech>=3){add("ai","I didn't hear anything. Tap 🎙️ Talk to start again.");stopVC()}
+      else setTimeout(listen,300);
+    };
+    r.start();
+  }catch(e){rec=null;add("ai","The mic isn't available here. Please type your line.");stopVC()}
+}
+
+/* ============ ANIMATED SCENES ============
+   Original mini-scenes starring the tutors. Nothing here is taken from a real show.
+   [[double brackets]] mark the phrase being taught. "a" is the tutor you picked, "b" is a partner from the same series. */
+const SCENES={
+  bush:[["a","So, the weather is lovely, the coffee is great... and, um, about your salary."],["b","Please stop [[beating around the bush]]. Just tell me the number!"],["a","Okay, okay. It's a yes!"]],
+  ground:[["b","Welcome to the team! Today is your first day."],["a","I'm ready to [[hit the ground running]]!"],["b","Great. Your first task is due at noon."]],
+  bullet:[["a","I really don't want to call the landlord."],["b","You have no choice. Just [[bite the bullet]] and call."],["a","Fine. Dialling now."]],
+  weather:[["b","Are you coming to the party tonight?"],["a","I'm feeling a bit [[under the weather]], so I'll stay home."],["b","Oh no. Get some rest!"]],
+  figure:[["a","This password is not working. I can't [[figure it out]]."],["b","Let's [[figure it out]] together."],["a","Found it! It was a typo."]],
+  ice:[["a","Everyone is so quiet in this meeting."],["b","Tell a joke to [[break the ice]]."],["a","Why did the English teacher sit down? Too many tenses!"]],
+  moon:[["b","Do you eat sweets often?"],["a","Only [[once in a blue moon]]."],["b","Then today is a special day!"]],
+  day:[["a","It's eight in the evening and we're still working."],["b","I'm tired. Let's [[call it a day]]."],["a","Agreed. See you tomorrow!"]],
+  cake:[["b","How was your English exam?"],["a","It was a [[piece of cake]]!"],["b","Wow. Then you can teach me tomorrow."]],
+  beans:[["b","Did you tell her about the surprise party?"],["a","No way! I didn't [[spill the beans]]."],["b","Good. It's our secret."]]
+};
+function sceneFor(p){
+  if(SCENES[p.id])return SCENES[p.id];
+  const i=p.example.toLowerCase().indexOf(p.phrase.toLowerCase());
+  const ex=i<0?p.example:p.example.slice(0,i)+"[["+p.example.slice(i,i+p.phrase.length)+"]]"+p.example.slice(i+p.phrase.length);
+  return [["a",ex],["b","Wait, what does “[["+p.phrase+"]]” mean?"],["a","It means: "+p.meaning.charAt(0).toLowerCase()+p.meaning.slice(1)]];
+}
+const PROPS={office:["🖥️","☕"],modern:["🛋️","🖼️"],friends:["☕","🛋️"],bigbang:["🧪","🔬"],b99:["📋","🚓"],parks:["🌳","🏛️"]};
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const strip=s=>s.replace(/\[\[|\]\]/g,"");
+function words(text){
+  const out=[];let m=false;
+  text.split(/(\[\[|\]\])/).forEach(seg=>{
+    if(seg==="[[")m=true;else if(seg==="]]")m=false;
+    else seg.split(/\s+/).filter(Boolean).forEach(w=>out.push({w,m}));
+  });
+  return out;
+}
+function partnerOf(t){
+  const mates=curSeries?curSeries.tutors:[];
+  return TUTORS.find(x=>x.id!==t.id&&mates.includes(x.id))||TUTORS.find(x=>x.id!==t.id);
+}
+function say(text,t){
+  return new Promise(res=>{
+    const ms=1300+text.length*60;let done=false;
+    const fin=()=>{if(!done){done=true;res()}};
+    try{
+      if(voiceOn&&window.speechSynthesis){
+        speechSynthesis.cancel();
+        const u=utter(text,t);
+        u.onend=fin;u.onerror=fin;speechSynthesis.speak(u);
+        setTimeout(fin,ms+5000);return;
+      }
+    }catch(e){}
+    setTimeout(fin,ms);
+  });
+}
+function setChyron(who,html){$("#cy-who").textContent=who;$("#cy-line").innerHTML="<span>"+html+"</span>"}
+function stageHTML(b,idx){
+  const props=(curSeries&&PROPS[curSeries.id])||["🎬","💬"],c=curSeries?curSeries.color:"#FF6B1A";
+  return `<div class="stage" style="--c:${c}">
+    <span class="prop" style="left:44%;top:60%">${props[0]}</span><span class="prop" style="left:52%;top:60%">${props[1]}</span>
+    <div class="actor a" id="actA" style="--spd:${tutor.energy.speed}">${avatar(tutor)}</div>
+    <div class="actor b" id="actB" style="--spd:${b.energy.speed}">${avatar(b)}</div>
+    <div class="chyron"><div class="who" id="cy-who">${esc(tutor.name)}</div><div class="line" id="cy-line">Press ▶ ROLL SCENE to start filming.</div></div>
+    <div class="clap" id="clap"><div class="board"><div class="stick"></div>SCENE ${idx+1}<br>TAKE 1</div></div></div>`;
+}
+function selectPhrase(id){
+  stopSpeech();
+  curPhrase=PHRASES.find(p=>p.id===id);
+  const p=curPhrase,idx=PHRASES.indexOf(p),b=partnerOf(tutor);
+  $("#ptype").textContent=p.type;$("#ptitle").textContent=p.phrase;$("#take").textContent=(tutor.idioms.includes(p)?tutor.idioms.indexOf(p)+1:"–")+" / "+tutor.idioms.length;
+  $("#stagebox").innerHTML=stageHTML(b,idx);
+  $("#lesson").innerHTML=`<div class="lrow"><span class="mono">Meaning</span><span>${esc(p.meaning)}</span></div>
+    <div class="lrow"><span class="mono">தமிழ்</span><span>${esc(p.tamil)}</span></div>
+    <div class="lrow ex"><span class="mono" style="font-style:normal">Example</span><span>${esc(p.example)}</span></div>
+    <div class="row"><button class="btn" id="play">▶ ROLL SCENE</button><button class="ghost" id="hear">🔊 Hear it</button><button class="ghost" id="quizme">🎯 Quiz me</button><button class="ghost" id="nextid">Next idiom ➜</button><span id="toast"></span></div>`;
+  $("#play").onclick=playScene;
+  $("#hear").onclick=()=>{try{speechSynthesis.cancel();speechSynthesis.speak(utter(p.phrase+". "+p.example,tutor))}catch(e){}};
+  $("#quizme").onclick=()=>ask(`Teach me "${p.phrase}" with a short example, then ask me ONE small question to test it.`,`Quiz me: ${p.phrase}`);
+  $("#nextid").onclick=()=>{const L=tutor.idioms,i=L.indexOf(p);selectPhrase(L[(i+1)%L.length].id)};
+  progress();
+}
+async function playScene(){
+  const run=++sceneRun,p=curPhrase,lines=sceneFor(p),b=partnerOf(tutor);
+  try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}
+  const btn=$("#play"),A=$("#actA"),B=$("#actB");
+  const rest=()=>{btn.textContent="↻ ROLL AGAIN";btn.onclick=playScene;A.classList.remove("talking");B.classList.remove("talking")};
+  btn.textContent="⏹ CUT!";
+  btn.onclick=()=>{sceneRun++;try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}rest();setChyron("DIRECTOR","Cut! Press ↻ to roll again.")};
+  setChyron("DIRECTOR","Quiet on set…");
+  $("#clap").classList.add("show");await wait(1100);$("#clap").classList.remove("show");
+  for(let i=0;i<lines.length;i++){
+    if(run!==sceneRun)return;
+    const [who,text]=lines[i],actor=who==="a"?tutor:b,ws=words(text);
+    A.classList.toggle("talking",who==="a");B.classList.toggle("talking",who==="b");
+    setChyron(actor.name,ws.map((x,k)=>`<span class="w hid ${x.m?"m":""}" data-k="${k}">${esc(x.w)} </span>`).join(""));
+    let k=0;const step=Math.max(160,Math.min(420,(1300+strip(text).length*60)/ws.length/actor.energy.speed*0.8));
+    const iv=setInterval(()=>{const el=$('#cy-line [data-k="'+k+'"]');if(el)el.classList.remove("hid");k++;if(k>=ws.length)clearInterval(iv)},step);
+    await say(strip(text),actor);
+    clearInterval(iv);
+    if(run!==sceneRun)return;
+    $("#cy-line").querySelectorAll(".hid").forEach(e=>e.classList.remove("hid"));
+    if(text.includes("[[")||i===lines.length-1)laughSound();
+    await wait(i===lines.length-1?900:450);
+  }
+  if(run!==sceneRun)return;
+  rest();
+  setChyron("TAMIL",esc(p.tamil));
+  if(!S.seen[p.id]){S.seen[p.id]=true;addXP(5)}
+}
+
+/* ============ CHAT ============ */
+function add(who,text,cls=""){
+  const l=$("#log"),d=document.createElement("div");
+  d.className=("msg "+who+" "+cls).trim();
+  d.innerHTML=`<div class="nm">${who==="me"?"You":esc(tutor.name)}</div><div class="tx"></div>`;
+  d.querySelector(".tx").textContent=text;l.appendChild(d);l.scrollTop=l.scrollHeight;return d;
+}
+const setTx=(d,t)=>{d.querySelector(".tx").textContent=t};
+function botSay(text){add("ai",text);history.push({role:"assistant",content:text});speak(text)}
+function speak(text,done){
+  const room=$("#ccard");let fired=false;
+  const fin=()=>{if(fired)return;fired=true;if(room)room.classList.remove("talking");if(done)done()};
+  try{
+    if(!voiceOn||!window.speechSynthesis||!room||!tutor){fin();return}
+    speechSynthesis.cancel();
+    const u=utter(text.replace(/[*_#`]/g,"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,""),tutor);
+    u.onstart=()=>{room.classList.add("talking");if(vc)vstat("🗣️ "+tutor.name+" is speaking…")};
+    u.onend=u.onerror=fin;
+    speechSynthesis.speak(u);
+    setTimeout(fin,text.length*130+6000);
+  }catch(e){fin()}
+}
+function send(){
+  const el=$("#inp"),t=el.value.trim();if(!t||busy)return;el.value="";ask(t,t);
+}
+async function ask(text,shown){
+  if(busy)return;busy=true;$("#send").disabled=true;
+  add("me",shown);history.push({role:"user",content:text});
+  const room=$("#ccard");room.classList.add("thinking");
+  const bubble=add("ai","Thinking…","typing");
+  let reply;
+  try{reply=await askAI(bubble)}catch(e){reply=offlineReply(text,e)}
+  room.classList.remove("thinking");
+  bubble.className="msg ai";setTx(bubble,reply);
+  history.push({role:"assistant",content:reply});speak(reply,()=>{if(vc){vstat("");listen()}});
+  $("#log").scrollTop=$("#log").scrollHeight;
+  checkUsed(text);
+  busy=false;$("#send").disabled=false;
+}
+async function askAI(bubble){
+  const msgs=history.slice(-16).map(m=>({role:m.role==="user"?"user":"assistant",content:m.content}));
+  let r;
+  try{r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+    tutor:{name:tutor.name,role:tutor.role,persona:tutor.persona},
+    phrase:curPhrase?{phrase:curPhrase.phrase,meaning:curPhrase.meaning}:null,
+    messages:msgs})})}catch(e){throw {code:"network"}}
+  if(r.status===429)throw {code:"rate_limited"};
+  if(!r.ok)throw {code:"server"};
+  const j=await r.json();const out=(j.text||"").trim();
+  if(!out)throw {code:"empty"};
+  return out;
+}
+
+/* Built-in tutor brain: used when the AI connection is not available in this view. */
+let quiz=null,offNote=false;
+const lc=s=>s.charAt(0).toLowerCase()+s.slice(1);
+function flav(ok){const L=tutor.energy.level;return ok?(L>=4?"Boom! ":L<=2?"Not bad. ":"Nice! "):(L>=4?"Ooh! ":L<=2?"Hmm. ":"Okay! ")}
+function findIdiom(text){const t=text.toLowerCase();let best=null;for(const p of PHRASES){const k=p.phrase.toLowerCase();if(t.includes(k)&&(!best||k.length>best.phrase.length))best=p}return best}
+const STOP=["what","does","mean","means","meaning","idiom","explain","about","tell","with","this","that","word","phrase","artham","please","teach"];
+function searchIdiom(text){
+  const ws=text.toLowerCase().replace(/[^a-z' ]/g," ").split(/\s+/).filter(w=>w.length>3&&!STOP.includes(w));if(!ws.length)return null;
+  let best=null,sc=0;
+  for(const p of PHRASES){const k=p.phrase.toLowerCase(),h=k+" "+p.meaning.toLowerCase();let s=0;ws.forEach(w=>{if(k.includes(w))s+=3;else if(h.includes(w))s+=1});if(s>sc){sc=s;best=p}}
+  return sc>=3?best:null;
+}
+function blank(p){const i=p.example.toLowerCase().indexOf(p.phrase.toLowerCase());return i<0?null:p.example.slice(0,i)+"_____"+p.example.slice(i+p.phrase.length)}
+function nextIdiom(){const pool=tutor.idioms.filter(p=>!S.done[p.id]);const L=pool.length?pool:tutor.idioms;return L[Math.floor(Math.random()*L.length)]}
+function explain(p){return `“${p.phrase}”: ${p.meaning}\nTamil: ${p.tamil}\nExample: ${p.example}`}
+function askBlank(p){const b=blank(p);if(!b)return `Now write your own sentence with “${p.phrase}”.`;quiz=p;return `Fill in the blank with the idiom:\n“${b}”`}
+function offlineTutor(text){
+  const t=text.trim(),low=t.toLowerCase();
+  if(/^Teach me "/.test(t)){const p=findIdiom(t);if(p)return explain(p)+"\n\n"+askBlank(p)}
+  if(quiz){const q=quiz;quiz=null;
+    return low.includes(q.phrase.toLowerCase())?`${flav(true)}Correct! “${q.phrase}” means ${lc(q.meaning)}\nType “quiz” for another one.`:`Not quite. The answer is “${q.phrase}”: ${lc(q.meaning)}\nType “quiz” to try another one.`}
+  if(/\bquiz\b|test me/.test(low)){const pool=tutor.idioms.filter(p=>blank(p));const p=pool[Math.floor(Math.random()*pool.length)];quiz=p;return `Fill in the blank with the idiom:\n“${blank(p)}”\nHint: ${p.meaning}`}
+  const asking=/\bwhat\b|\bmean|explain|artham|\bwhy\b|\bhow\b/.test(low);
+  const used=findIdiom(t);
+  if(used&&!asking){const n=nextIdiom();return `${flav(true)}You used “${used.phrase}” (${lc(used.meaning)})\nNext one: “${n.phrase}”. Do you know what it means? Ask me, or type “quiz”.`}
+  if(asking){const p=used||searchIdiom(t);
+    if(p)return explain(p)+"\nYour turn: write your own sentence with it!";
+    return `${flav(false)}I couldn't find that one in my library. Tap 📚 Idioms and search, or ask me about one of ${tutor.name}'s idioms.`}
+  if(/^(hi|hello|hey|hai|hii|yo|good (morning|evening|afternoon))\b/.test(low)){const n=nextIdiom();return `${flav(true)}Hello! Let's learn something. Today's idiom is “${n.phrase}”: ${lc(n.meaning)} Ask me about it, or type “quiz”.`}
+  const n=nextIdiom();
+  return `${flav(true)}Let's use your words to learn. Today's idiom: “${n.phrase}”\n${n.meaning}\nExample: ${n.example}\nNow write your own sentence with it!`;
+}
+function offlineReply(t,err){
+  const code=err&&err.code;
+  const why=code==="network"?"I can't reach the AI server. Open this site through the server (npm start, then http://localhost:3000), not by opening the file directly."
+    :code==="rate_limited"?"Too many messages in a short time. Try again in a few minutes."
+    :"The AI server returned an error. Check the API key and the server window for details.";
+  let r=offlineTutor(t);
+  if(!offNote||code!=="network"){offNote=true;r+="\n\n("+why+" Until then I'm using my built-in brain.)"}
+  return r;
+}
+function checkUsed(text){
+  if(!curPhrase||/^(Teach me|I want to practise|The learner)/.test(text))return;
+  if(text.toLowerCase().includes(curPhrase.phrase)&&!S.done[curPhrase.id]){
+    S.done[curPhrase.id]=true;addXP(20);
+    progress();laughSound();
+    const t=$("#toast");if(t)t.innerHTML=`<span class="toast">👏 You used “${esc(curPhrase.phrase)}”! +20 XP</span>`;
+  }
+}
+
+/* ============ START ============ */
+renderStats();
+showHome();
+</script>
