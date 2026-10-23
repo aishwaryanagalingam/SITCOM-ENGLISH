@@ -3,22 +3,37 @@
 A static website (`public/index.html`) plus a small Node server (`server.js`, no packages needed) that talks to the Anthropic API.
 The API key lives only on the server, so visitors can never see or steal it.
 
-## 1. Get an API key
-Create one at https://console.anthropic.com (API keys). Set a monthly spend limit there.
+## 1. Get an API key (pick one)
+**A. Anthropic (Claude), best quality.** Create a key at https://console.anthropic.com and set a monthly spend limit.
+
+**B. A free option.** Some providers give a free tier and speak the OpenAI-compatible format. Examples: Groq (console.groq.com) or Google AI Studio (aistudio.google.com). Check their docs for the current free model name and base URL, then use the `LLM_*` settings below.
 
 ## 2. Run it on your computer
+The site must be opened **through the server**. Double-clicking `public/index.html` will NOT reach the AI (you will see "I can't reach the AI server").
+
+Windows PowerShell (Anthropic):
 ```
-export ANTHROPIC_API_KEY=your-key-here      # Windows PowerShell: $env:ANTHROPIC_API_KEY="your-key-here"
-npm start
+$env:ANTHROPIC_API_KEY="your-key-here"
+node server.js
 ```
-Open http://localhost:3000
+Windows PowerShell (free OpenAI-compatible provider):
+```
+$env:LLM_PROVIDER="openai"
+$env:LLM_API_KEY="your-key-here"
+$env:LLM_BASE_URL="https://<provider-base-url>/chat/completions"
+$env:MODEL="<model-name-from-provider-docs>"
+node server.js
+```
+Mac/Linux: use `export NAME=value` instead of `$env:NAME="value"`.
+
+Then open http://localhost:3000 in Chrome. Pick a tutor and talk. Replies are short and human-like, and the tutor speaks them aloud. Tap 🎙️ Talk to speak (Chrome or Edge).
 
 ## 3. Deploy to your official website
 Any host that runs Node 18+ works. Easiest on Render (similar steps on Railway or Fly.io):
 1. Put this folder in a GitHub repo (the `.gitignore` already keeps `.env` out).
 2. Render > New > Web Service > pick the repo.
 3. Build command: leave empty (no packages to install). Start command: `npm start`.
-4. Add environment variable `ANTHROPIC_API_KEY` (and optionally the ones in `.env.example`).
+4. Add the same environment variables you used locally (see `.env.example`).
 5. Deploy, then add your domain under Settings > Custom Domains. HTTPS is automatic.
 
 If your official site is already on another host, either deploy this app on a subdomain (for example `learn.yoursite.com`)
